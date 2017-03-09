@@ -9,7 +9,8 @@ class Lab1 {
 
     //ПОЛЯ ДЛЯ ВЫЧИСЛЕНИЙ
     private int[][] variables;
-    private int[] function, weight, net, y, out, delta;
+    private int[] function, y, out, delta;
+    private double[] weight, net;
     private int errorCounter;
 
     //ВСПОМОГАТЕЛЬНЫЕ КОНСТРУКЦИИ
@@ -26,12 +27,12 @@ class Lab1 {
         ACTTIVATION_FUNCTION = activationFunc;
         variables = new int[NUMBER_OF_SETS][NUMBER_OF_VARIABLES];
         function = new int[NUMBER_OF_SETS];
-        weight = new int[NUMBER_OF_VARIABLES];
-        net = new int[NUMBER_OF_SETS];
+        weight = new double[NUMBER_OF_VARIABLES];
+        net = new double[NUMBER_OF_SETS];
         y = new int[NUMBER_OF_SETS];
         out = new int[NUMBER_OF_SETS];
         delta = new int[NUMBER_OF_SETS];
-        errorCounter = 0;
+        System.arraycopy(function, 0, delta, 0, function.length); //первоначальные значения ошибок
         initializeVariables();
         if (!initializeFunction()) throw new RuntimeException("Инициализация вектора значений функции не выполнена");
     }
@@ -104,7 +105,7 @@ class Lab1 {
     private void outEvaluateLinear () {
         for (int i = 0; i < NUMBER_OF_SETS; i++) {
             //работа линейной функции активации нейрона
-            out[i] = net[i] >= 0 ? 1 : 0;
+            out[i] = (net[i] >= 0 ? 1 : 0);
         }
     }
 
