@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-class Lab1 {
+class Lab1 implements LabCommonClass{
     //КОНСТАНТЫ
     private int NUMBER_OF_VARIABLES; //включая фиктивную переменную x_0 = 1
     private int NUMBER_OF_SETS;
@@ -9,8 +9,8 @@ class Lab1 {
 
     //ПОЛЯ ДЛЯ ВЫЧИСЛЕНИЙ
     private int[][] variables;
-    private int[] function, y, out, delta;
-    private double[] weight, net;
+    private int[] function, y, delta;
+    private double[] weight, net, out;
     private int errorCounter;
 
     //ВСПОМОГАТЕЛЬНЫЕ КОНСТРУКЦИИ
@@ -30,7 +30,7 @@ class Lab1 {
         weight = new double[NUMBER_OF_VARIABLES];
         net = new double[NUMBER_OF_SETS];
         y = new int[NUMBER_OF_SETS];
-        out = new int[NUMBER_OF_SETS];
+        out = new double[NUMBER_OF_SETS];
         delta = new int[NUMBER_OF_SETS];
         System.arraycopy(function, 0, delta, 0, function.length); //первоначальные значения ошибок
         initializeVariables();
@@ -38,21 +38,17 @@ class Lab1 {
         errorEvaluate();
     }
 
-    void start() {
+    public void start() {
         int epoch = 1;
         do {
             System.out.println("    ЭПОХА: " + epoch++);
             deltaEvaluate();
             weightCorrection();
             netEvaluate();
-            switch (ACTIVATION_FUNCTION) {
-                case "linear":
-                    outEvaluateLinear();
-                    yEvaluateLinear();
-                    break;
-                case "sigmoid":
 
-            }
+            outEvaluate();
+            yEvaluate();
+
             printData();
             errorEvaluate();
             System.out.println("Ошибки: " + errorCounter + "\r\n");
@@ -85,7 +81,7 @@ class Lab1 {
     }
 
     private boolean initializeFunction () {
-        System.out.println("Введите вектор значений функции в одну строку без пробелов: ");
+        System.out.println("Введите вектор значений функции в одну строку без пробелов (\"default\" для собственного варианта задания): ");
         StringBuilder enteredFunction = new StringBuilder();
         enteredFunction.append(consoleReader.next());
         if (enteredFunction.toString().equals("default")) {
@@ -115,7 +111,6 @@ class Lab1 {
         }
     }
 
-    //линейная функция активации
     private void netEvaluate() {
         double temp;
         for (int i = 0; i < NUMBER_OF_SETS; i++) {
@@ -127,23 +122,31 @@ class Lab1 {
         }
     }
 
-    private void outEvaluateLinear () {
-        double eps = -1e-5;
-        for (int i = 0; i < NUMBER_OF_SETS; i++) {
-            //работа линейной функции активации нейрона
-//            out[i] = (net[i] > 0.0 ? 1 : 0);
-            out[i] = net[i] > eps ? 1 : 0; //более корректное сравнение чисел с плавающей точкой
+    private void outEvaluate() {
+        switch (ACTIVATION_FUNCTION) {
+            case "linear":
+                System.arraycopy(net, 0, out,0, net.length);
+                break;
+            case "sigmoid":
+                for (int i = 0; i < NUMBER_OF_SETS; i++) { //здесь можно добавить любую ФА
+                    out[i] = 0.5 * (Math.tanh(net[i]) + 1);
+                }
         }
     }
 
-    private void yEvaluateLinear () {
-        System.arraycopy(out, 0, y,0,out.length);
+    private void yEvaluate() {
+        double border = 0;
+        switch (ACTIVATION_FUNCTION) {
+            case "linear":
+                border = -1e-5; //для корректного сравнения с нулем чисел с плавающей точкой
+                break;
+            case "sigmoid":
+                border = 0.5;
+        }
+        for (int i = 0; i < NUMBER_OF_SETS; i++) {
+            y[i] = (net[i] >= border ? 1 : 0);
+        }
     }
-    //
-
-    //нелинейная функция активации
-
-    //
 
     private void weightCorrection () {
         for (int i = 0; i < NUMBER_OF_VARIABLES; i++) {
@@ -164,12 +167,11 @@ class Lab1 {
         System.out.println();
 
         System.out.println("OUT: ");
-        for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%d ", out[i]);
+        for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%.2f ", out[i]);
         System.out.println();
 
         System.out.println("Y: ");
         for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%d ", y[i]);
         System.out.println();
     }
-
 }
