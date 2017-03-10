@@ -2,11 +2,11 @@ import java.util.Scanner;
 
 public class LabLauncher {
     public static void main(String[] args) {
-        LabCommonClass lab = null;
-        int labNumber = 0;
-        double norm = 0.0;
+        LabCommonClass lab;
+        int labNumber;
+        double norm;
         Scanner scanner = new Scanner(System.in);
-        String activationFunc = "";
+        String activationFunc;
         if (args.length != 3) {
             System.out.println("Неверные аргументы командной строки (требуется: номер работы, норма обучения, функция активации)");
             return;

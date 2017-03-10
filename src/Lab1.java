@@ -47,10 +47,8 @@ class Lab1 implements LabCommonClass{
             deltaEvaluate();
             weightCorrection();
             netEvaluate();
-
             outEvaluate();
             yEvaluate();
-
             printData();
             errorEvaluate();
             System.out.println("Ошибки: " + errorCounter + "\r\n");
