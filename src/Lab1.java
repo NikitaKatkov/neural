@@ -162,15 +162,14 @@ class Lab1 implements LabCommonClass{
         for (int i = 0; i < NUMBER_OF_VARIABLES; i++) System.out.format("%.2f ", weight[i]);
         System.out.println();
 
-        System.out.println("NET: ");
-        for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%.2f ", net[i]);
-        System.out.println();
+//        System.out.println("NET: ");
+//        for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%.2f ", net[i]);
+//        System.out.println();
+//        System.out.println("OUT: ");
+//        for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%.2f ", out[i]);
+//        System.out.println();
 
-        System.out.println("OUT: ");
-        for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%.2f ", out[i]);
-        System.out.println();
-
-        System.out.println("Y: ");
+        System.out.println("Значения полученной функции: ");
         for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%d ", y[i]);
         System.out.println();
     }
