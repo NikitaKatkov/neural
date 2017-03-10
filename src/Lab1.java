@@ -17,6 +17,7 @@ class Lab1 implements LabCommonClass{
     private Scanner consoleReader = new Scanner(System.in);
 
     //МЕТОДЫ
+    //конструктор
     Lab1 (int numberOfVariables, double norm, String activationFunc) {
         NUMBER_OF_VARIABLES = numberOfVariables;
         NUMBER_OF_SETS = (int)Math.pow(2, NUMBER_OF_VARIABLES-1);
@@ -38,6 +39,7 @@ class Lab1 implements LabCommonClass{
         errorEvaluate();
     }
 
+    //интерфейсный метод запуска работы
     public void start() {
         int epoch = 1;
         do {
@@ -60,6 +62,7 @@ class Lab1 implements LabCommonClass{
         } while (errorCounter > 0);
     }
 
+    //инициализация списка наборов переменных в порядке возрастания
     private void initializeVariables () {
         for (int i = 0; i < NUMBER_OF_SETS; i++) {
             //установка x_0 = 1
@@ -80,6 +83,7 @@ class Lab1 implements LabCommonClass{
         }
     }
 
+    //инициализация вектора значений булевой функции
     private boolean initializeFunction () {
         System.out.println("Введите вектор значений функции в одну строку без пробелов (\"default\" для собственного варианта задания): ");
         StringBuilder enteredFunction = new StringBuilder();
@@ -97,13 +101,14 @@ class Lab1 implements LabCommonClass{
     }
 
 
+    //вычисление вектора ошибок
     private void deltaEvaluate () {
         for (int i = 0; i < NUMBER_OF_SETS; i++) {
             delta[i] = function[i] - y[i];
-//            if (delta[i] != 0) errorCounter++;
         }
     }
 
+    //подсчет количества ошибок
     private void errorEvaluate () {
         errorCounter = 0;
         for (int i = 0; i < NUMBER_OF_SETS; i++) {
@@ -111,6 +116,7 @@ class Lab1 implements LabCommonClass{
         }
     }
 
+    //первоначальный выход нейросети
     private void netEvaluate() {
         double temp;
         for (int i = 0; i < NUMBER_OF_SETS; i++) {
@@ -122,6 +128,7 @@ class Lab1 implements LabCommonClass{
         }
     }
 
+    //функция активации
     private void outEvaluate() {
         switch (ACTIVATION_FUNCTION) {
             case "linear":
@@ -134,6 +141,7 @@ class Lab1 implements LabCommonClass{
         }
     }
 
+    //реальный выход нейросети (двоичный вектор)
     private void yEvaluate() {
         double border = 0;
         switch (ACTIVATION_FUNCTION) {
@@ -148,10 +156,12 @@ class Lab1 implements LabCommonClass{
         }
     }
 
+    //производная сигмоидальной функции
     private double derivativeSigmoid (int index) {
         return -0.5*Math.pow(Math.tanh(net[index]), 2) + 0.5;
     }
 
+    //коррекция весов
     private void weightCorrection () {
         switch (ACTIVATION_FUNCTION){
             case "sigmoid":
@@ -160,12 +170,13 @@ class Lab1 implements LabCommonClass{
         for (int i = 0; i < NUMBER_OF_VARIABLES; i++) {
             for (int j = 0; j < NUMBER_OF_SETS; j++) {
                 weight[i] += N*delta[j]*variables[j][i];
-                if (ACTIVATION_FUNCTION == "sigmoid") weight[i] *= derivativeSigmoid(i); //если производная не единица, домножим на нее
+                if (ACTIVATION_FUNCTION.equals("sigmoid")) weight[i] *= derivativeSigmoid(i); //если производная не единица, домножим на нее
             }
         }
     }
 
     //геттеры, сеттеры, принтеры
+    //печать лога в консоль
     private void printData() {
         System.out.print("Веса: ");
         for (int i = 0; i < NUMBER_OF_VARIABLES; i++) System.out.format("%.2f ", weight[i]);
