@@ -148,10 +148,19 @@ class Lab1 implements LabCommonClass{
         }
     }
 
+    private double derivativeSigmoid (int index) {
+        return -0.5*Math.pow(Math.tanh(net[index]), 2) + 0.5;
+    }
+
     private void weightCorrection () {
+        switch (ACTIVATION_FUNCTION){
+            case "sigmoid":
+
+        }
         for (int i = 0; i < NUMBER_OF_VARIABLES; i++) {
             for (int j = 0; j < NUMBER_OF_SETS; j++) {
-                weight[i] += N*delta[j]*variables[j][i]; //добавить умножение на лямбду-нелинейную ФА
+                weight[i] += N*delta[j]*variables[j][i];
+                if (ACTIVATION_FUNCTION == "sigmoid") weight[i] *= derivativeSigmoid(i); //если производная не единица, домножим на нее
             }
         }
     }
@@ -161,14 +170,12 @@ class Lab1 implements LabCommonClass{
         System.out.print("Веса: ");
         for (int i = 0; i < NUMBER_OF_VARIABLES; i++) System.out.format("%.2f ", weight[i]);
         System.out.println();
-
 //        System.out.println("NET: ");
 //        for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%.2f ", net[i]);
 //        System.out.println();
 //        System.out.println("OUT: ");
 //        for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%.2f ", out[i]);
 //        System.out.println();
-
         System.out.println("Значения полученной функции: ");
         for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%d ", y[i]);
         System.out.println();
