@@ -35,18 +35,29 @@ class Lab1 {
         System.arraycopy(function, 0, delta, 0, function.length); //первоначальные значения ошибок
         initializeVariables();
         if (!initializeFunction()) throw new RuntimeException("Инициализация вектора значений функции не выполнена");
+        errorEvaluate();
     }
 
     void start() {
+        int epoch = 1;
         do {
-            errorCounter = 0;
+            System.out.println("    ЭПОХА: " + epoch++);
+            deltaEvaluate();
+            weightCorrection();
+            printWeight();
+
             netEvaluate();
             outEvaluateLinear();
             yEvaluateLinear();
-            deltaEvaluate();
+            printY();
+
+            errorEvaluate();
             System.out.println("Ошибки: " + errorCounter);
-            if(errorCounter > 0) weightCorrection();
-            printWeight();
+
+            if (epoch > 100) {
+                System.out.println("Количество эпох превышает допустимый предел, остановка вычислений");
+                break;
+            }
         } while (errorCounter > 0);
     }
 
@@ -88,17 +99,26 @@ class Lab1 {
     private void deltaEvaluate () {
         for (int i = 0; i < NUMBER_OF_SETS; i++) {
             delta[i] = function[i] - y[i];
-            if (delta[i] != 0) errorCounter++;
+//            if (delta[i] != 0) errorCounter++;
         }
     }
 
+    private void errorEvaluate () {
+        errorCounter = 0;
+        for (int i = 0; i < NUMBER_OF_SETS; i++) {
+            if (function[i] != y[i]) errorCounter++;
+        }
+    }
 
     //линейная функция активации
     private void netEvaluate() {
+        double temp;
         for (int i = 0; i < NUMBER_OF_SETS; i++) {
+            temp = 0;
             for (int j = 0; j < NUMBER_OF_VARIABLES; j++) {
-                net[i] = weight[j]*variables[i][j];
+                temp += weight[j]*variables[i][j];
             }
+            net[i] = temp;
         }
     }
 
@@ -127,9 +147,22 @@ class Lab1 {
     //геттеры, сеттеры, принтеры
     private void printWeight() {
         System.out.print("Веса: ");
-        for (int i = 0; i < NUMBER_OF_VARIABLES; i++) {
-            System.out.print(weight[i] + " ");
-        }
+        for (int i = 0; i < NUMBER_OF_VARIABLES; i++) System.out.format("%.2f ", weight[i]);
         System.out.println();
     }
+
+    private void printY () {
+        System.out.println("NET: ");
+        for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%.2f ", net[i]);
+        System.out.println();
+
+        System.out.println("OUT: ");
+        for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%d ", out[i]);
+        System.out.println();
+
+        System.out.println("Y: ");
+        for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%d ", y[i]);
+        System.out.println();
+    }
+
 }
