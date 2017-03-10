@@ -44,9 +44,7 @@ class Lab1 {
             System.out.println("    ЭПОХА: " + epoch++);
             deltaEvaluate();
             weightCorrection();
-
             netEvaluate();
-
             switch (ACTIVATION_FUNCTION) {
                 case "linear":
                     outEvaluateLinear();
@@ -55,9 +53,7 @@ class Lab1 {
                 case "sigmoid":
 
             }
-
             printData();
-
             errorEvaluate();
             System.out.println("Ошибки: " + errorCounter + "\r\n");
 
@@ -92,7 +88,9 @@ class Lab1 {
         System.out.println("Введите вектор значений функции в одну строку без пробелов: ");
         StringBuilder enteredFunction = new StringBuilder();
         enteredFunction.append(consoleReader.next());
-        if (enteredFunction.length() != NUMBER_OF_SETS) {
+        if (enteredFunction.equals("default")) {
+            enteredFunction.replace(0, enteredFunction.length(), "0101011101110111"); //мой вариант задания по умолчанию
+        } else if (enteredFunction.length() != NUMBER_OF_SETS) {
             System.out.println("Введен неверный вектор значений, возможно, присутствуют не числовые символы");
             return false;
         }
@@ -130,11 +128,11 @@ class Lab1 {
     }
 
     private void outEvaluateLinear () {
-        double eps = 1e-5;
+        double eps = -1e-5;
         for (int i = 0; i < NUMBER_OF_SETS; i++) {
             //работа линейной функции активации нейрона
 //            out[i] = (net[i] > 0.0 ? 1 : 0);
-            out[i] = Math.abs(net[i]) > eps ? 1 : 0; //более корректное сравнение чисел с плавающей точкой
+            out[i] = net[i] > eps ? 1 : 0; //более корректное сравнение чисел с плавающей точкой
         }
     }
 
