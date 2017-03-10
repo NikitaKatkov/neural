@@ -88,7 +88,7 @@ class Lab1 {
         System.out.println("Введите вектор значений функции в одну строку без пробелов: ");
         StringBuilder enteredFunction = new StringBuilder();
         enteredFunction.append(consoleReader.next());
-        if (enteredFunction.equals("default")) {
+        if (enteredFunction.toString().equals("default")) {
             enteredFunction.replace(0, enteredFunction.length(), "0101011101110111"); //мой вариант задания по умолчанию
         } else if (enteredFunction.length() != NUMBER_OF_SETS) {
             System.out.println("Введен неверный вектор значений, возможно, присутствуют не числовые символы");
