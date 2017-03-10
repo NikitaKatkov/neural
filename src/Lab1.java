@@ -5,7 +5,7 @@ class Lab1 {
     private int NUMBER_OF_VARIABLES; //включая фиктивную переменную x_0 = 1
     private int NUMBER_OF_SETS;
     private double N; //норма обучения
-    private String ACTTIVATION_FUNCTION;
+    private String ACTIVATION_FUNCTION;
 
     //ПОЛЯ ДЛЯ ВЫЧИСЛЕНИЙ
     private int[][] variables;
@@ -24,7 +24,7 @@ class Lab1 {
         if (!activationFunc.equals("linear") && !activationFunc.equals("sigmoid")) {
             System.out.println("Неверный параметр: функция активации (требуется linear или sigmoid)");
             throw new RuntimeException("Инициализация функции активации не выполнена");        }
-        ACTTIVATION_FUNCTION = activationFunc;
+        ACTIVATION_FUNCTION = activationFunc;
         variables = new int[NUMBER_OF_SETS][NUMBER_OF_VARIABLES];
         function = new int[NUMBER_OF_SETS];
         weight = new double[NUMBER_OF_VARIABLES];
@@ -44,15 +44,22 @@ class Lab1 {
             System.out.println("    ЭПОХА: " + epoch++);
             deltaEvaluate();
             weightCorrection();
-            printWeight();
 
             netEvaluate();
-            outEvaluateLinear();
-            yEvaluateLinear();
-            printY();
+
+            switch (ACTIVATION_FUNCTION) {
+                case "linear":
+                    outEvaluateLinear();
+                    yEvaluateLinear();
+                    break;
+                case "sigmoid":
+
+            }
+
+            printData();
 
             errorEvaluate();
-            System.out.println("Ошибки: " + errorCounter);
+            System.out.println("Ошибки: " + errorCounter + "\r\n");
 
             if (epoch > 100) {
                 System.out.println("Количество эпох превышает допустимый предел, остановка вычислений");
@@ -123,9 +130,11 @@ class Lab1 {
     }
 
     private void outEvaluateLinear () {
+        double eps = 1e-5;
         for (int i = 0; i < NUMBER_OF_SETS; i++) {
             //работа линейной функции активации нейрона
-            out[i] = (net[i] >= 0 ? 1 : 0);
+//            out[i] = (net[i] > 0.0 ? 1 : 0);
+            out[i] = Math.abs(net[i]) > eps ? 1 : 0; //более корректное сравнение чисел с плавающей точкой
         }
     }
 
@@ -133,7 +142,9 @@ class Lab1 {
         System.arraycopy(out, 0, y,0,out.length);
     }
     //
+
     //нелинейная функция активации
+
     //
 
     private void weightCorrection () {
@@ -145,13 +156,11 @@ class Lab1 {
     }
 
     //геттеры, сеттеры, принтеры
-    private void printWeight() {
+    private void printData() {
         System.out.print("Веса: ");
         for (int i = 0; i < NUMBER_OF_VARIABLES; i++) System.out.format("%.2f ", weight[i]);
         System.out.println();
-    }
 
-    private void printY () {
         System.out.println("NET: ");
         for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%.2f ", net[i]);
         System.out.println();
