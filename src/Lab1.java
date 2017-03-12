@@ -161,14 +161,11 @@ class Lab1 implements LabCommonClass{
 
     //коррекция весов
     private void weightCorrection () {
-        switch (ACTIVATION_FUNCTION){
-            case "sigmoid":
-
-        }
+        double derivative = 1;
         for (int i = 0; i < NUMBER_OF_VARIABLES; i++) {
             for (int j = 0; j < NUMBER_OF_SETS; j++) {
-                weight[i] += N*delta[j]*variables[j][i];
-                if (ACTIVATION_FUNCTION.equals("sigmoid")) weight[i] *= derivativeSigmoid(i); //если производная не единица, домножим на нее
+                if (ACTIVATION_FUNCTION.equals("sigmoid")) derivative= derivativeSigmoid(i); //если производная не единица, домножим на нее
+                weight[i] += N*delta[j]*variables[j][i]*derivative;
             }
         }
     }

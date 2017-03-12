@@ -10,21 +10,14 @@ public class Functions {
         for (int i = 0; i < lengthOfCombination; i++) {
             combination.add(i); //генерация первой последовательности
         }
+        combinationSet.add(0, combination);
 
-
-        recursiveIncrement(combination, lengthOfCombination-1, maximumCombinationElement);
+        recursiveIncrement(combinationSet, lengthOfCombination-1, maximumCombinationElement);
         return combinationSet;
     }
 
-    private boolean recursiveIncrement (List<Integer> combination, int index, int maximumCombinationElement) {
-        if (index < 0) return false;
-        if (combination.get(index) < maximumCombinationElement) {
-            combination.set(index, combination.get(index)+1); //увеличение первого возможного элемента
-            return true;
-        } else {
-            recursiveIncrement(combination, index-1, maximumCombinationElement);
-        }
-        return false; //вот это вообще тупо, но идея не разрешает не дописывать данную строку, хотя она недостижима
+    private boolean recursiveIncrement (List<List<Integer>> combinationSet, int index, int maximumCombinationElement) {
+        return false;
     }
 
     private int C(int n, int k) {
