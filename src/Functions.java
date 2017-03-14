@@ -1,34 +1,42 @@
-import java.util.ArrayList;
 import java.util.List;
 
 public class Functions {
     //методы данного класса потенциально могут использоваться во многих работах
-    public List<List<Integer>> getCombinationSet(int lengthOfCombination, int maximumCombinationElement) {
-        //получает следующее подмножество из предыдущего, length - количество членов, size - наибольшее значение члена комбинации
-        List<List<Integer>> combinationSet = new ArrayList<>();
-        List<Integer> combination = new ArrayList<>();
-        for (int i = 0; i < lengthOfCombination; i++) {
-            combination.add(i); //генерация первой последовательности
+
+    public List<Integer> getNextCombination(List<Integer> combination, int maxCombinationSize) {
+        int combinationSize = combination.size(); //длина предыдущей комбинации
+        boolean lengthChange = true; //флаг необходимости увеличения длины комбинации
+
+        // проверка на пустоту - для первого вызова метода
+        if (combination.size() == 0) {
+            combination.add(0,0);
+            return combination;
         }
-        combinationSet.add(0, combination);
-
-        recursiveIncrement(combinationSet, lengthOfCombination-1, maximumCombinationElement);
-        return combinationSet;
-    }
-
-    private boolean recursiveIncrement (List<List<Integer>> combinationSet, int index, int maximumCombinationElement) {
-        return false;
-    }
-
-    private int C(int n, int k) {
-        return factorial(n)/factorial(k)/factorial(n-k);
-    }
-
-    private int factorial(int n) {
-        int result = 1;
-        for (int i = 1; i <= n; i++) {
-            result*=i;
+        //проверка на последнюю возможную комбинацию данной длины
+        if (combination.get(combinationSize-1) < maxCombinationSize - 1) { //максимальное ли значение у последнего члена
+            lengthChange = false;
+        } else {//отличаются ли все соседние элементы на единицу или больше
+            for (int i = combinationSize - 1; i > 0; i--) {
+                if (combination.get(i) - combination.get(i - 1) > 1) {
+                    lengthChange = false;
+                    break;
+                }
+            }
         }
-        return result;
+        //если требуется создать комбинацию большей длины
+        if (lengthChange) { //генерация комбинации из наименьших элементов длины combinationSize + 1
+            combination.clear();
+            for (int i = 0; i < combinationSize + 1; i++) {
+                combination.add(i, i);
+            }
+        } else { //изменение членов комбинации в лексикографическом порядке при ее фиксированном размере
+            int indexToIncrease = combinationSize - 1;
+            while (combination.get(indexToIncrease) >= maxCombinationSize - combinationSize + indexToIncrease) indexToIncrease--;
+            combination.set(indexToIncrease, combination.get(indexToIncrease) + 1);
+            for (int i = indexToIncrease + 1; i < combinationSize; i++) {
+                combination.set(i, combination.get(i - 1) + 1);
+            }
+        }
+       return combination;
     }
 }

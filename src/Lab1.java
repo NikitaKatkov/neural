@@ -1,8 +1,8 @@
 import java.util.Scanner;
 
-class Lab1 implements LabCommonClass{
+class Lab1 implements LabCommonInterface {
     //КОНСТАНТЫ
-    private int NUMBER_OF_VARIABLES; //включая фиктивную переменную x_0 = 1
+    int NUMBER_OF_VARIABLES; //включая фиктивную переменную x_0 = 1
     private int NUMBER_OF_SETS;
     private double N; //норма обучения
     private String ACTIVATION_FUNCTION;
@@ -40,7 +40,7 @@ class Lab1 implements LabCommonClass{
     }
 
     //интерфейсный метод запуска работы
-    public void start() {
+    public boolean start() { //возвращает булево значение в зависимости от корректности обучения
         int epoch = 1;
         do {
             System.out.println("    ЭПОХА: " + epoch++);
@@ -52,12 +52,12 @@ class Lab1 implements LabCommonClass{
             printData();
             errorEvaluate();
             System.out.println("Ошибки: " + errorCounter + "\r\n");
-
             if (epoch > 100) {
                 System.out.println("Количество эпох превышает допустимый предел, остановка вычислений");
-                break;
+                return false;
             }
         } while (errorCounter > 0);
+        return true;
     }
 
     //инициализация списка наборов переменных в порядке возрастания
@@ -164,7 +164,7 @@ class Lab1 implements LabCommonClass{
         double derivative = 1;
         for (int i = 0; i < NUMBER_OF_VARIABLES; i++) {
             for (int j = 0; j < NUMBER_OF_SETS; j++) {
-                if (ACTIVATION_FUNCTION.equals("sigmoid")) derivative= derivativeSigmoid(i); //если производная не единица, домножим на нее
+                if (ACTIVATION_FUNCTION.equals("sigmoid")) derivative = derivativeSigmoid(i); //если производная не единица, домножим на нее
                 weight[i] += N*delta[j]*variables[j][i]*derivative;
             }
         }

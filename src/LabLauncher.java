@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 public class LabLauncher {
     public static void main(String[] args) {
-        LabCommonClass lab;
+        LabCommonInterface lab;
         int labNumber;
         double norm;
         Scanner scanner = new Scanner(System.in);

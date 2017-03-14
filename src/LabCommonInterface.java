@@ -1,4 +1,4 @@
-interface LabCommonClass {
+interface LabCommonInterface {
     //для удобства запуска всех лабораторных
-    void start();
+    boolean start();
 }
