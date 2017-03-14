@@ -65,23 +65,25 @@ class Lab1 implements LabCommonInterface {
     private boolean trainNet () {
         int epoch = 1;
         do {
-            System.out.println("    ЭПОХА: " + epoch++);
             deltaEvaluate();
             weightCorrection();
             netEvaluate();
             outEvaluate();
             yEvaluate();
-            printData();
             errorEvaluate();
-            System.out.println("Ошибки: " + errorCounter + "\r\n");
+            if (!enableSelection) {
+                System.out.println("    ЭПОХА: " + epoch);
+                printData();
+                System.out.println("Ошибки: " + errorCounter + "\r\n");
+            }
+            epoch++;
             if (epoch > EPOCH_LIMIT) {
-                System.out.println("Количество эпох превышает допустимый предел, остановка вычислений");
+                if (!enableSelection) System.out.println("Количество эпох превышает допустимый предел, остановка вычислений");
                 return false;
             }
         } while (errorCounter > 0);
         return true;
     }
-
 
     //обучение с перебором наборов
     private boolean trainNetWithSelection () {
@@ -90,7 +92,7 @@ class Lab1 implements LabCommonInterface {
         do {
             combinationSet = Functions.getNextCombination(combinationSet, NUMBER_OF_SETS);
             clearFields();
-            System.out.println("\r\n        Комбинация наборов №" + (iteration+1));
+//            System.out.println("\r\n        Комбинация наборов №" + (iteration+1));
             isTrainingComplete = trainNet();
             iteration++;
         } while (!isTrainingComplete && iteration < iterationLimit);
