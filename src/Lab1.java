@@ -8,8 +8,8 @@ class Lab1 implements LabCommonInterface {
     private int NUMBER_OF_SETS;
     private double N; //норма обучения
     private String ACTIVATION_FUNCTION;
-    private int EPOCH_LIMIT = 10;
-    private final String linearAF = "linear", nonLinearAF = "nonlinear";
+    private int EPOCH_LIMIT = 100;
+    private final String LINEAR_AF = "linear", NONLINEAR_AF = "nonlinear";
 
 
     //ПОЛЯ ДЛЯ ВЫЧИСЛЕНИЙ
@@ -31,7 +31,7 @@ class Lab1 implements LabCommonInterface {
         this.enableSelection = enableSelection;
         NUMBER_OF_SETS = (int)Math.pow(2, NUMBER_OF_VARIABLES-1);
         N = norm;
-        if (!activationFunc.equals(linearAF) && !activationFunc.equals(nonLinearAF)) {
+        if (!activationFunc.equals(LINEAR_AF) && !activationFunc.equals(NONLINEAR_AF)) {
             System.out.println("Неверный параметр: функция активации (требуется linear или nonlinear)"); //вынести названия функций в константы
             throw new RuntimeException("Инициализация функции активации не выполнена");        }
         ACTIVATION_FUNCTION = activationFunc;
@@ -171,10 +171,10 @@ class Lab1 implements LabCommonInterface {
     //функция активации
     private void outEvaluate() {
         switch (ACTIVATION_FUNCTION) {
-            case linearAF:
+            case LINEAR_AF:
                 System.arraycopy(net, 0, out,0, net.length);
                 break;
-            case nonLinearAF:
+            case NONLINEAR_AF:
                 for (int i =0; i < NUMBER_OF_SETS; i++) { //здесь можно добавить любую ФА
                     out[i] = 0.5 * (Math.tanh(net[i]) + 1);
                 }
@@ -185,10 +185,10 @@ class Lab1 implements LabCommonInterface {
     private void yEvaluate() {
         double border = 0;
         switch (ACTIVATION_FUNCTION) {
-            case linearAF:
+            case LINEAR_AF:
                 border = -1e-5; //для корректного сравнения с нулем чисел с плавающей точкой
                 break;
-            case nonLinearAF:
+            case NONLINEAR_AF:
                 border = 0.5;
         }
         for (int i =0; i < NUMBER_OF_SETS; i++) {
@@ -206,7 +206,7 @@ class Lab1 implements LabCommonInterface {
         double derivative = 1;
         for (int i = 0; i < NUMBER_OF_VARIABLES; i++) {
             for (int j : combinationSet) {
-                if (ACTIVATION_FUNCTION.equals(nonLinearAF)) derivative = nonLinearDerivative(i); //если производная не единица, домножим на нее
+                if (ACTIVATION_FUNCTION.equals(NONLINEAR_AF)) derivative = nonLinearDerivative(i); //если производная не единица, домножим на нее
                 weight[i] += N*delta[j]*variables[j][i]*derivative;
             }
         }
