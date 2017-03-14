@@ -1,9 +1,9 @@
 import java.util.List;
 
-public class Functions {
+class Functions {
     //методы данного класса потенциально могут использоваться во многих работах
 
-    public List<Integer> getNextCombination(List<Integer> combination, int maxCombinationSize) {
+    static List<Integer> getNextCombination(List<Integer> combination, int maxCombinationSize) {
         int combinationSize = combination.size(); //длина предыдущей комбинации
         boolean lengthChange = true; //флаг необходимости увеличения длины комбинации
 

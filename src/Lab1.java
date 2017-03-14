@@ -1,29 +1,38 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 class Lab1 implements LabCommonInterface {
     //КОНСТАНТЫ
-    int NUMBER_OF_VARIABLES; //включая фиктивную переменную x_0 = 1
+    private int NUMBER_OF_VARIABLES; //не включая фиктивную переменную x_0 = 1
     private int NUMBER_OF_SETS;
     private double N; //норма обучения
     private String ACTIVATION_FUNCTION;
+    private int EPOCH_LIMIT = 10;
+    private final String linearAF = "linear", nonLinearAF = "nonlinear";
+
 
     //ПОЛЯ ДЛЯ ВЫЧИСЛЕНИЙ
     private int[][] variables;
     private int[] function, y, delta;
     private double[] weight, net, out;
     private int errorCounter;
+    private List<Integer> combinationSet;
+    private boolean enableSelection;
 
     //ВСПОМОГАТЕЛЬНЫЕ КОНСТРУКЦИИ
     private Scanner consoleReader = new Scanner(System.in);
 
     //МЕТОДЫ
     //конструктор
-    Lab1 (int numberOfVariables, double norm, String activationFunc) {
-        NUMBER_OF_VARIABLES = numberOfVariables;
+    Lab1 (int numberOfVariables, double norm, String activationFunc, boolean enableSelection) {
+        numberOfVariables++;
+        NUMBER_OF_VARIABLES = numberOfVariables; //учиываем x_0
+        this.enableSelection = enableSelection;
         NUMBER_OF_SETS = (int)Math.pow(2, NUMBER_OF_VARIABLES-1);
         N = norm;
-        if (!activationFunc.equals("linear") && !activationFunc.equals("sigmoid")) {
-            System.out.println("Неверный параметр: функция активации (требуется linear или sigmoid)");
+        if (!activationFunc.equals(linearAF) && !activationFunc.equals(nonLinearAF)) {
+            System.out.println("Неверный параметр: функция активации (требуется linear или nonlinear)"); //вынести названия функций в константы
             throw new RuntimeException("Инициализация функции активации не выполнена");        }
         ACTIVATION_FUNCTION = activationFunc;
         variables = new int[NUMBER_OF_SETS][NUMBER_OF_VARIABLES];
@@ -33,6 +42,12 @@ class Lab1 implements LabCommonInterface {
         y = new int[NUMBER_OF_SETS];
         out = new double[NUMBER_OF_SETS];
         delta = new int[NUMBER_OF_SETS];
+        combinationSet = new ArrayList<>();
+        if (!enableSelection) {
+            for (int i = 0; i < NUMBER_OF_SETS; i++) { //combinationSet содержит полный список наборов, если не стоит флаг их перебора
+                combinationSet.add(i, i);
+            }
+        }
         System.arraycopy(function, 0, delta, 0, function.length); //первоначальные значения ошибок
         initializeVariables();
         if (!initializeFunction()) throw new RuntimeException("Инициализация вектора значений функции не выполнена");
@@ -41,6 +56,13 @@ class Lab1 implements LabCommonInterface {
 
     //интерфейсный метод запуска работы
     public boolean start() { //возвращает булево значение в зависимости от корректности обучения
+        if (enableSelection) {
+            return trainNetWithSelection();
+        } else return trainNet();
+    }
+
+    //обучение без перебора наборов
+    private boolean trainNet () {
         int epoch = 1;
         do {
             System.out.println("    ЭПОХА: " + epoch++);
@@ -52,12 +74,30 @@ class Lab1 implements LabCommonInterface {
             printData();
             errorEvaluate();
             System.out.println("Ошибки: " + errorCounter + "\r\n");
-            if (epoch > 100) {
+            if (epoch > EPOCH_LIMIT) {
                 System.out.println("Количество эпох превышает допустимый предел, остановка вычислений");
                 return false;
             }
         } while (errorCounter > 0);
         return true;
+    }
+
+
+    //обучение с перебором наборов
+    private boolean trainNetWithSelection () {
+        boolean isTrainingComplete;
+        int iteration = 0, iterationLimit = (int)Math.pow(2, NUMBER_OF_SETS);
+        do {
+            combinationSet = Functions.getNextCombination(combinationSet, NUMBER_OF_SETS);
+            clearFields();
+            System.out.println("\r\n        Комбинация наборов №" + (iteration+1));
+            isTrainingComplete = trainNet();
+            iteration++;
+        } while (!isTrainingComplete && iteration < iterationLimit);
+        System.out.println("Обучение завершено: " + isTrainingComplete +
+        "\r\nКоличество наборов в обучающей выборке: " + combinationSet.size() +
+        "\r\nНомера наборов: " + combinationSet);
+        return isTrainingComplete;
     }
 
     //инициализация списка наборов переменных в порядке возрастания
@@ -101,7 +141,7 @@ class Lab1 implements LabCommonInterface {
 
     //вычисление вектора ошибок
     private void deltaEvaluate () {
-        for (int i = 0; i < NUMBER_OF_SETS; i++) {
+        for (int i =0; i < NUMBER_OF_SETS; i++) {
             delta[i] = function[i] - y[i];
         }
     }
@@ -109,7 +149,7 @@ class Lab1 implements LabCommonInterface {
     //подсчет количества ошибок
     private void errorEvaluate () {
         errorCounter = 0;
-        for (int i = 0; i < NUMBER_OF_SETS; i++) {
+        for (int i =0; i < NUMBER_OF_SETS; i++) {
             if (function[i] != y[i]) errorCounter++;
         }
     }
@@ -117,7 +157,7 @@ class Lab1 implements LabCommonInterface {
     //первоначальный выход нейросети
     private void netEvaluate() {
         double temp;
-        for (int i = 0; i < NUMBER_OF_SETS; i++) {
+        for (int i =0; i < NUMBER_OF_SETS; i++) {
             temp = 0;
             for (int j = 0; j < NUMBER_OF_VARIABLES; j++) {
                 temp += weight[j]*variables[i][j];
@@ -129,11 +169,11 @@ class Lab1 implements LabCommonInterface {
     //функция активации
     private void outEvaluate() {
         switch (ACTIVATION_FUNCTION) {
-            case "linear":
+            case linearAF:
                 System.arraycopy(net, 0, out,0, net.length);
                 break;
-            case "sigmoid":
-                for (int i = 0; i < NUMBER_OF_SETS; i++) { //здесь можно добавить любую ФА
+            case nonLinearAF:
+                for (int i =0; i < NUMBER_OF_SETS; i++) { //здесь можно добавить любую ФА
                     out[i] = 0.5 * (Math.tanh(net[i]) + 1);
                 }
         }
@@ -143,19 +183,19 @@ class Lab1 implements LabCommonInterface {
     private void yEvaluate() {
         double border = 0;
         switch (ACTIVATION_FUNCTION) {
-            case "linear":
+            case linearAF:
                 border = -1e-5; //для корректного сравнения с нулем чисел с плавающей точкой
                 break;
-            case "sigmoid":
+            case nonLinearAF:
                 border = 0.5;
         }
-        for (int i = 0; i < NUMBER_OF_SETS; i++) {
+        for (int i =0; i < NUMBER_OF_SETS; i++) {
             y[i] = (net[i] >= border ? 1 : 0);
         }
     }
 
     //производная сигмоидальной функции
-    private double derivativeSigmoid (int index) {
+    private double nonLinearDerivative(int index) {
         return -0.5*Math.pow(Math.tanh(net[index]), 2) + 0.5;
     }
 
@@ -163,12 +203,13 @@ class Lab1 implements LabCommonInterface {
     private void weightCorrection () {
         double derivative = 1;
         for (int i = 0; i < NUMBER_OF_VARIABLES; i++) {
-            for (int j = 0; j < NUMBER_OF_SETS; j++) {
-                if (ACTIVATION_FUNCTION.equals("sigmoid")) derivative = derivativeSigmoid(i); //если производная не единица, домножим на нее
+            for (int j : combinationSet) {
+                if (ACTIVATION_FUNCTION.equals(nonLinearAF)) derivative = nonLinearDerivative(i); //если производная не единица, домножим на нее
                 weight[i] += N*delta[j]*variables[j][i]*derivative;
             }
         }
     }
+
 
     //геттеры, сеттеры, принтеры
     //печать лога в консоль
@@ -185,5 +226,19 @@ class Lab1 implements LabCommonInterface {
         System.out.println("Значения полученной функции: ");
         for (int i = 0; i < NUMBER_OF_SETS; i++) System.out.format("%d ", y[i]);
         System.out.println();
+    }
+
+    //очистка полей для повторного обучения
+    private void clearFields() {
+        for (int i = 0; i < NUMBER_OF_VARIABLES; i++) {
+            weight[i] = 0;
+        }
+        for (int i = 0; i < NUMBER_OF_SETS; i++) {
+            out[i] = 0;
+            net[i] = 0;
+            y[i] = 0;
+        }
+        errorCounter = 0;
+        System.arraycopy(function, 0, delta, 0, function.length);
     }
 }

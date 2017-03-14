@@ -19,7 +19,21 @@ public class LabLauncher {
             case 1:
                 System.out.println("Введите количество переменных: ");
                 int numberOfVariables = scanner.nextInt();
-                lab = new Lab1(numberOfVariables, norm, activationFunc);
+                System.out.println("Включить поиск наименьшего подмножества наборов для обучения? (y/n) ");
+                String selection = scanner.next();
+                boolean enableSelection;
+                switch (selection) {
+                    case "y":
+                        enableSelection = true;
+                        break;
+                    case "n":
+                        enableSelection = false;
+                        break;
+                    default:
+                        System.out.println("Неверный формат введенных данных!");
+                        return;
+                }
+                lab = new Lab1(numberOfVariables, norm, activationFunc, enableSelection);
                 break;
             default:
                 System.out.println("Остальных лаб пока нет :)");
