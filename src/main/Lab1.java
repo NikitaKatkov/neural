@@ -1,7 +1,5 @@
 package main;
 
-import org.jfree.data.xy.XYSeries;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -12,7 +10,7 @@ class Lab1 implements LabCommonInterface {
     private int _numberOfSets;
     private double _n; //норма обучения
     private String _activationFunction;
-    private int _epochLimit = 100;
+    private final int _epochLimit = 100;
     private final String _linearAF = "linear", _nonlinearAF = "nonlinear";
 
 
@@ -23,24 +21,23 @@ class Lab1 implements LabCommonInterface {
     private int _errorCounter;
     private List<Integer> _combinationSet;
     private boolean _enableSelection;
-    private XYSeries _series;
 
     //ВСПОМОГАТЕЛЬНЫЕ КОНСТРУКЦИИ
     private Scanner _consoleReader = new Scanner(System.in);
 
     //МЕТОДЫ
     //конструктор
-    Lab1(int numberOfVariables, double norm, String activationFunc, boolean _enableSelection) {
+    Lab1(int numberOfVariables, double norm, String activationFunction, boolean enableSelection) {
         numberOfVariables++;
         _numberOfVariables = numberOfVariables; //учиываем x_0
-        this._enableSelection = _enableSelection;
+        this._enableSelection = enableSelection;
         _numberOfSets = (int) Math.pow(2, _numberOfVariables - 1);
         _n = norm;
-        if (!activationFunc.equals(_linearAF) && !activationFunc.equals(_nonlinearAF)) {
+        if (!activationFunction.equals(_linearAF) && !activationFunction.equals(_nonlinearAF)) {
             System.out.println("Неверный параметр: функция активации (требуется linear или nonlinear)"); //вынести названия функций в константы
             throw new RuntimeException("Инициализация функции активации не выполнена");
         }
-        _activationFunction = activationFunc;
+        _activationFunction = activationFunction;
         _variables = new int[_numberOfSets][_numberOfVariables];
         _function = new int[_numberOfSets];
         _weight = new double[_numberOfVariables];
@@ -49,12 +46,11 @@ class Lab1 implements LabCommonInterface {
         _out = new double[_numberOfSets];
         _delta = new int[_numberOfSets];
         _combinationSet = new ArrayList<>();
-        if (!_enableSelection) {
+        if (!enableSelection) {
             for (int i = 0; i < _numberOfSets; i++) { //_combinationSet содержит полный список наборов, если не стоит флаг их перебора
                 _combinationSet.add(i, i);
             }
         }
-        System.arraycopy(_function, 0, _delta, 0, _function.length); //первоначальные значения ошибок
         initializeVariables();
         if (!initializeFunction()) throw new RuntimeException("Инициализация вектора значений функции не выполнена");
         errorEvaluate();
@@ -70,13 +66,14 @@ class Lab1 implements LabCommonInterface {
     //обучение без перебора наборов
     private boolean trainNet() {
         int epoch = 1;
-        _series = new XYSeries("E = f(epoch)");
         do {
-            deltaEvaluate();
-            weightCorrection();
-            netEvaluate();
-            outEvaluate();
-            yEvaluate();
+            for (int setNumber : _combinationSet) {
+                netEvaluate();
+                outEvaluate();
+                yEvaluate();
+                deltaEvaluate();
+                if (_delta[setNumber] != 0) weightCorrection(setNumber);
+            }
             errorEvaluate();
             if (!_enableSelection) {
                 System.out.println("    ЭПОХА: " + epoch);
@@ -85,8 +82,7 @@ class Lab1 implements LabCommonInterface {
             }
             epoch++;
             if (epoch > _epochLimit) {
-                if (!_enableSelection)
-                    System.out.println("Количество эпох превышает допустимый предел, остановка вычислений");
+                if (!_enableSelection) System.out.println("Количество эпох превышает допустимый предел, остановка вычислений");
                 return false;
             }
         } while (_errorCounter > 0);
@@ -213,14 +209,12 @@ class Lab1 implements LabCommonInterface {
     }
 
     //коррекция весов
-    private void weightCorrection() {
+    private void weightCorrection(int setNumber) { // коррекция весов по вектору переменных с номером setNumber
         double derivative = 1;
         for (int i = 0; i < _numberOfVariables; i++) {
-            for (int j : _combinationSet) {
                 if (_activationFunction.equals(_nonlinearAF))
                     derivative = nonLinearDerivative(i); //если производная не единица, домножим на нее
-                _weight[i] += _n * _delta[j] * _variables[j][i] * derivative;
-            }
+                _weight[i] += _n * _delta[setNumber] * _variables[setNumber][i] * derivative;
         }
     }
 
