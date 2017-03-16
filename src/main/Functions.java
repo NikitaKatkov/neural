@@ -1,3 +1,6 @@
+package main;
+
+import java.util.ArrayList;
 import java.util.List;
 
 class Functions {
@@ -20,7 +23,7 @@ class Functions {
                 if (combination.get(i) - combination.get(i - 1) > 1) {
                     lengthChange = false;
                     break;
-                }
+                } else if (combination.size() == maxCombinationSize) return new ArrayList<Integer>(); //после возвращения самого множества вернем пустой список
             }
         }
         //если требуется создать комбинацию большей длины
