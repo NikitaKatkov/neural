@@ -26,6 +26,7 @@ public class LabLauncher {
                 нужно использовать нижеследующий закомментированный блок кода, который выполнит программу 4 раза.
                 Но лучше запускать по-нормальному, мы ведь здоровые и адекватные люди, знающие, чо хардкод - это убого ;)
                 */
+
                 /*
                 System.out.println("Введите количество переменных: ");
                 int numberOfVariables = scanner.nextInt();
@@ -44,21 +45,21 @@ public class LabLauncher {
                         return;
                 }
                 lab = new Lab1(numberOfVariables, norm, activationFunc, enableSelection);
-                */
-
+*/
                 //конец адекватного запуска, начало глупого и некрасивого (и вообще на работе бы руки оторвали за такое)
 
+
                 System.out.format("%nЛинейная ФА без перебора%n");
-                lab = new Lab1(4,0.11, "linear", false);
+                lab = new Lab1(4,0.3, "linear", false);
                 lab.start();
                 System.out.format("%nЛинейная ФА с перебором%n");
-                lab = new Lab1(4,0.11, "linear", true);
+                lab = new Lab1(4,0.15, "linear", true);
                 lab.start();
                 System.out.format("%nНелинейная ФА без перебора%n");
-                lab = new Lab1(4,0.11, "nonlinear", false);
+                lab = new Lab1(4,0.15, "nonlinear", false);
                 lab.start();
                 System.out.format("%nНелинейная ФА с перебором%n");
-                lab = new Lab1(4,0.11, "nonlinear", true);
+                lab = new Lab1(4,0.15, "nonlinear", true);
                 lab.start();
 
                 break;
@@ -66,6 +67,6 @@ public class LabLauncher {
                 System.out.println("Остальных лаб пока нет :)");
                 return;
         }
-//        lab.start();
+        //lab.start();
     }
 }

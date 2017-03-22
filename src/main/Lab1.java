@@ -11,7 +11,7 @@ class Lab1 implements LabCommonInterface {
     private double _n; //норма обучения
     private String _activationFunction;
     private final int _epochLimit = 100;
-    private final String _linearAF = "linear", _nonlinearAF = "nonlinear";
+    private final String _linearAF = "linear", _nonlinearAF = "nonlinear", _defaultFunction = "0101011101110111";
 
 
     //ПОЛЯ ДЛЯ ВЫЧИСЛЕНИЙ
@@ -68,10 +68,10 @@ class Lab1 implements LabCommonInterface {
         int epoch = 1;
         do {
             for (int setNumber : _combinationSet) {
-                netEvaluate();
-                outEvaluate();
-                yEvaluate();
-                deltaEvaluate();
+                netEvaluate(setNumber);
+                outEvaluate(setNumber);
+                yEvaluate(setNumber);
+                deltaEvaluate(setNumber);
                 if (_delta[setNumber] != 0) weightCorrection(setNumber);
             }
             errorEvaluate();
@@ -136,7 +136,7 @@ class Lab1 implements LabCommonInterface {
         StringBuilder enteredFunction = new StringBuilder();
         enteredFunction.append(_consoleReader.next());
         if (enteredFunction.toString().equals("default")) {
-            enteredFunction.replace(0, enteredFunction.length(), "0101011101110111"); //мой вариант задания по умолчанию
+            enteredFunction.replace(0, enteredFunction.length(), _defaultFunction); //мой вариант задания по умолчанию
         } else if (enteredFunction.length() != _numberOfSets) {
             System.out.println("Введен неверный вектор значений, возможно, присутствуют не числовые символы");
             return false;
@@ -149,10 +149,10 @@ class Lab1 implements LabCommonInterface {
 
 
     //вычисление вектора ошибок
-    private void deltaEvaluate() {
-        for (int i = 0; i < _numberOfSets; i++) {
-            _delta[i] = _function[i] - _y[i];
-        }
+    private void deltaEvaluate(int setNumber) {
+//        for (int i = 0; i < _numberOfSets; i++) {
+            _delta[setNumber] = _function[setNumber] - _y[setNumber];
+//        }
     }
 
     //подсчет количества ошибок
@@ -164,32 +164,33 @@ class Lab1 implements LabCommonInterface {
     }
 
     //первоначальный выход нейросети
-    private void netEvaluate() {
+    private void netEvaluate(int setNumber) {
         double temp;
-        for (int i = 0; i < _numberOfSets; i++) {
+//        for (int i = 0; i < _numberOfSets; i++) {
             temp = 0;
             for (int j = 0; j < _numberOfVariables; j++) {
-                temp += _weight[j] * _variables[i][j];
+                temp += _weight[j] * _variables[setNumber][j];
             }
-            _net[i] = temp;
-        }
+            _net[setNumber] = temp;
+//        }
     }
 
     //функция активации
-    private void outEvaluate() {
+    private void outEvaluate(int setNumber) {
         switch (_activationFunction) {
             case _linearAF:
-                System.arraycopy(_net, 0, _out, 0, _net.length);
+//                System.arraycopy(_net, 0, _out, 0, _net.length);
+                _out[setNumber] = _net[setNumber];
                 break;
             case _nonlinearAF:
-                for (int i = 0; i < _numberOfSets; i++) { //здесь можно добавить любую ФА
-                    _out[i] = 0.5 * (Math.tanh(_net[i]) + 1);
-                }
+//                for (int i = 0; i < _numberOfSets; i++) { //здесь можно добавить любую ФА
+                    _out[setNumber] = 0.5 * (Math.tanh(_net[setNumber]) + 1);
+//                }
         }
     }
 
     //реальный выход нейросети (двоичный вектор)
-    private void yEvaluate() {
+    private void yEvaluate(int setNumber) {
         double border = 0;
         switch (_activationFunction) {
             case _linearAF:
@@ -198,9 +199,9 @@ class Lab1 implements LabCommonInterface {
             case _nonlinearAF:
                 border = 0.5;
         }
-        for (int i = 0; i < _numberOfSets; i++) {
-            _y[i] = (_net[i] >= border ? 1 : 0);
-        }
+//        for (int i = 0; i < _numberOfSets; i++) {
+            _y[setNumber] = (_net[setNumber] >= border ? 1 : 0);
+//        }
     }
 
     //производная сигмоидальной функции
