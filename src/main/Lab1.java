@@ -84,9 +84,6 @@ class Lab1 implements LabCommonInterface {
                 System.out.println("Ошибки: " + _errorCounter + "\r\n ");
             } else {
                 errorEvaluate();
-//                System.out.println("    ЭПОХА: " + epoch);
-//                printData();
-//                System.out.println("Ошибки: " + _errorCounter + "\r\n
             }
             epoch++;
             if (epoch > _epochLimit) {
@@ -163,11 +160,11 @@ class Lab1 implements LabCommonInterface {
 //        }
     }
 
-    //подсчет количества ошибок
+    //подсчет количества ошибок при поиске минимального числа наборов для обучения
     private void errorEvaluate() {
-        _errorCounter = 0;
+//        _errorCounter = 0;
         for (int i = 0; i < _numberOfSets; i++) {
-            if (_function[i] != _y[i]) _errorCounter++;
+            if (!_combinationSet.contains(i) && _function[i] != _y[i]) _errorCounter++;
         }
     }
 
