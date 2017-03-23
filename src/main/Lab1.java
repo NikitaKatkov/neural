@@ -78,20 +78,22 @@ class Lab1 implements LabCommonInterface {
                     _errorCounter++;
                 }
             }
-//            errorEvaluate(); //в методичке написано, что ошибка вычисляется в конце эпохи!!!
             if (!_enableSelection) {
                 System.out.println("    ЭПОХА: " + epoch);
                 printData();
                 System.out.println("Ошибки: " + _errorCounter + "\r\n ");
             } else {
                 errorEvaluate();
+//                System.out.println("    ЭПОХА: " + epoch);
+//                printData();
+//                System.out.println("Ошибки: " + _errorCounter + "\r\n
             }
             epoch++;
             if (epoch > _epochLimit) {
                 if (!_enableSelection) System.out.println("Количество эпох превышает допустимый предел, остановка вычислений");
                 return false;
             }
-        } while (_errorCounter > 0);
+        } while (!(_errorCounter == 0 && checkNet()));
         return true;
     }
 
@@ -223,6 +225,20 @@ class Lab1 implements LabCommonInterface {
                     derivative = nonLinearDerivative(i); //если производная не единица, домножим на нее
                 _weight[i] += _norm * _delta[setNumber] * _variables[setNumber][i] * derivative;
         }
+    }
+
+    //проверка сети на работоспособность
+    private boolean checkNet() {
+        for (int i = 0; i < _numberOfSets; i++) {
+            netEvaluate(i);
+            outEvaluate(i);
+            yEvaluate(i);
+            deltaEvaluate(i);
+            if (_delta[i] != 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
 

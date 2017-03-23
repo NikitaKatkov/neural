@@ -27,7 +27,7 @@ public class LabLauncher {
                 Но лучше запускать по-нормальному, мы ведь здоровые и адекватные люди, знающие, чо хардкод - это убого ;)
                 */
 
-/*
+
                 System.out.println("Введите количество переменных: ");
                 int numberOfVariables = scanner.nextInt();
                 System.out.println("Включить поиск наименьшего подмножества наборов для обучения? (y/n) ");
@@ -45,10 +45,10 @@ public class LabLauncher {
                         return;
                 }
                 lab = new Lab1(numberOfVariables, norm, activationFunc, enableSelection);
-*/
+
                 //конец адекватного запуска, начало глупого и некрасивого (и вообще на работе бы руки оторвали за такое)
 
-
+/*
                 System.out.format("%nЛинейная ФА без перебора%n");
                 lab = new Lab1(4,0.15, "linear", false);
                 lab.start();
@@ -61,12 +61,12 @@ public class LabLauncher {
                 System.out.format("%nНелинейная ФА с перебором%n");
                 lab = new Lab1(4,0.15, "nonlinear", true);
                 lab.start();
-
+*/
                 break;
             default:
                 System.out.println("Остальных лаб пока нет :)");
                 return;
         }
-//        lab.start();
+        lab.start();
     }
 }
