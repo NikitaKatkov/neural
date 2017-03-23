@@ -8,7 +8,7 @@ class Lab1 implements LabCommonInterface {
     //ПАРАМЕТРЫ ЗАДАЧИ
     private int _numberOfVariables; //не включая фиктивную переменную x_0 = 1
     private int _numberOfSets;
-    private double _n; //норма обучения
+    private double _norm; //норма обучения
     private String _activationFunction;
     private final int _epochLimit = 100;
     private final String _linearAF = "linear", _nonlinearAF = "nonlinear", _defaultFunction = "0101011101110111";
@@ -32,7 +32,7 @@ class Lab1 implements LabCommonInterface {
         _numberOfVariables = numberOfVariables; //учиываем x_0
         this._enableSelection = enableSelection;
         _numberOfSets = (int) Math.pow(2, _numberOfVariables - 1);
-        _n = norm;
+        _norm = norm;
         if (!activationFunction.equals(_linearAF) && !activationFunction.equals(_nonlinearAF)) {
             System.out.println("Неверный параметр: функция активации (требуется linear или nonlinear)"); //вынести названия функций в константы
             throw new RuntimeException("Инициализация функции активации не выполнена");
@@ -67,18 +67,21 @@ class Lab1 implements LabCommonInterface {
     private boolean trainNet() {
         int epoch = 1;
         do {
+             _errorCounter = 0;
             for (int setNumber : _combinationSet) {
-                netEvaluate(setNumber);
-                outEvaluate(setNumber);
-                yEvaluate(setNumber);
-                deltaEvaluate(setNumber);
-                if (_delta[setNumber] != 0) weightCorrection(setNumber);
+                netEvaluate();
+                outEvaluate();
+                yEvaluate();
+                deltaEvaluate();
+                if (_delta[setNumber] != 0) {
+                    weightCorrection(setNumber);
+                }
             }
-            errorEvaluate();
+            errorEvaluate(); //в методичке написано, что ошибка вычисляется в конце эпохи!!!
             if (!_enableSelection) {
                 System.out.println("    ЭПОХА: " + epoch);
                 printData();
-                System.out.println("Ошибки: " + _errorCounter + "\r\n");
+                System.out.println("Ошибки: " + _errorCounter + "\r\n ");
             }
             epoch++;
             if (epoch > _epochLimit) {
@@ -149,10 +152,10 @@ class Lab1 implements LabCommonInterface {
 
 
     //вычисление вектора ошибок
-    private void deltaEvaluate(int setNumber) {
-//        for (int i = 0; i < _numberOfSets; i++) {
-            _delta[setNumber] = _function[setNumber] - _y[setNumber];
-//        }
+    private void deltaEvaluate() {
+        for (int i = 0; i < _numberOfSets; i++) {
+            _delta[i] = _function[i] - _y[i];
+        }
     }
 
     //подсчет количества ошибок
@@ -164,44 +167,43 @@ class Lab1 implements LabCommonInterface {
     }
 
     //первоначальный выход нейросети
-    private void netEvaluate(int setNumber) {
+    private void netEvaluate() {
         double temp;
-//        for (int i = 0; i < _numberOfSets; i++) {
+        for (int i = 0; i < _numberOfSets; i++) {
             temp = 0;
             for (int j = 0; j < _numberOfVariables; j++) {
-                temp += _weight[j] * _variables[setNumber][j];
+                temp += _weight[j] * _variables[i][j];
             }
-            _net[setNumber] = temp;
-//        }
+            _net[i] = temp;
+        }
     }
 
     //функция активации
-    private void outEvaluate(int setNumber) {
+    private void outEvaluate() {
         switch (_activationFunction) {
             case _linearAF:
-//                System.arraycopy(_net, 0, _out, 0, _net.length);
-                _out[setNumber] = _net[setNumber];
+                System.arraycopy(_net, 0, _out, 0, _net.length);
                 break;
             case _nonlinearAF:
-//                for (int i = 0; i < _numberOfSets; i++) { //здесь можно добавить любую ФА
-                    _out[setNumber] = 0.5 * (Math.tanh(_net[setNumber]) + 1);
-//                }
+                for (int i = 0; i < _numberOfSets; i++) { //здесь можно добавить любую ФА
+                    _out[i] = 0.5 * (Math.tanh(_net[i]) + 1);
+                }
         }
     }
 
     //реальный выход нейросети (двоичный вектор)
-    private void yEvaluate(int setNumber) {
+    private void yEvaluate() {
         double border = 0;
         switch (_activationFunction) {
             case _linearAF:
-                border = -1e-5; //для корректного сравнения с нулем чисел с плавающей точкой
+                border = -0.00001; //для корректного сравнения с нулем чисел с плавающей точкой
                 break;
             case _nonlinearAF:
                 border = 0.5;
         }
-//        for (int i = 0; i < _numberOfSets; i++) {
-            _y[setNumber] = (_net[setNumber] >= border ? 1 : 0);
-//        }
+        for (int i = 0; i < _numberOfSets; i++) {
+            _y[i] = (_net[i] >= border ? 1 : 0);
+        }
     }
 
     //производная сигмоидальной функции
@@ -215,7 +217,7 @@ class Lab1 implements LabCommonInterface {
         for (int i = 0; i < _numberOfVariables; i++) {
                 if (_activationFunction.equals(_nonlinearAF))
                     derivative = nonLinearDerivative(i); //если производная не единица, домножим на нее
-                _weight[i] += _n * _delta[setNumber] * _variables[setNumber][i] * derivative;
+                _weight[i] += _norm * _delta[setNumber] * _variables[setNumber][i] * derivative;
         }
     }
 
