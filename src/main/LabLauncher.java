@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class LabLauncher {
     public static void main(String[] args) {
-        LabCommonInterface lab;
+        LabCommonClass lab;
         int labNumber;
         double norm;
         Scanner scanner = new Scanner(System.in);
@@ -27,7 +27,6 @@ public class LabLauncher {
                 Но лучше запускать по-нормальному, мы ведь здоровые и адекватные люди, знающие, чо хардкод - это убого ;)
                 */
 
-
                 System.out.println("Введите количество переменных: ");
                 int numberOfVariables = scanner.nextInt();
                 System.out.println("Включить поиск наименьшего подмножества наборов для обучения? (y/n) ");
@@ -45,7 +44,6 @@ public class LabLauncher {
                         return;
                 }
                 lab = new Lab1(numberOfVariables, norm, activationFunc, enableSelection);
-
                 //конец адекватного запуска, начало глупого и некрасивого (и вообще на работе бы руки оторвали за такое)
 
 /*

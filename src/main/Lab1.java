@@ -4,22 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-class Lab1 implements LabCommonInterface {
+class Lab1 extends LabCommonClass {
     //ПАРАМЕТРЫ ЗАДАЧИ
     private int _numberOfVariables; //не включая фиктивную переменную x_0 = 1
     private int _numberOfSets;
-    private double _norm; //норма обучения
-    private String _activationFunction;
-    private final int _epochLimit = 100;
-    private final String _linearAF = "linear", _nonlinearAF = "nonlinear", _defaultFunction = "0101011101110111";
-
+    private final String _defaultFunction = "0101011101110111";
+    List<Integer> _combinationSet;
 
     //ПОЛЯ ДЛЯ ВЫЧИСЛЕНИЙ
     private int[][] _variables;
-    private int[] _function, _y, _delta;
-    private double[] _weight, _net, _out;
-    private int _errorCounter;
-    private List<Integer> _combinationSet;
     private boolean _enableSelection;
 
     //ВСПОМОГАТЕЛЬНЫЕ КОНСТРУКЦИИ
@@ -30,7 +23,7 @@ class Lab1 implements LabCommonInterface {
     Lab1(int numberOfVariables, double norm, String activationFunction, boolean enableSelection) {
         numberOfVariables++;
         _numberOfVariables = numberOfVariables; //учиываем x_0
-        this._enableSelection = enableSelection;
+        _enableSelection = enableSelection;
         _numberOfSets = (int) Math.pow(2, _numberOfVariables - 1);
         _norm = norm;
         if (!activationFunction.equals(_linearAF) && !activationFunction.equals(_nonlinearAF)) {
@@ -53,10 +46,10 @@ class Lab1 implements LabCommonInterface {
         }
         initializeVariables();
         if (!initializeFunction()) throw new RuntimeException("Инициализация вектора значений функции не выполнена");
-//        errorEvaluate();
     }
 
-    //интерфейсный метод запуска работы
+    //запуск работы
+    @Override
     public boolean start() { //возвращает булево значение в зависимости от корректности обучения
         if (_enableSelection) {
             return trainNetWithSelection();
@@ -64,7 +57,8 @@ class Lab1 implements LabCommonInterface {
     }
 
     //обучение без перебора наборов
-    private boolean trainNet() {
+    @Override
+    protected boolean trainNet() {
         int epoch = 1;
         do {
              _errorCounter = 0;
@@ -152,12 +146,13 @@ class Lab1 implements LabCommonInterface {
         return true;
     }
 
-
-    //вычисление вектора ошибок
-    private void deltaEvaluate(int setNumber) {
-//        for (int i = 0; i < _numberOfSets; i++) {
-            _delta[setNumber] = _function[setNumber] - _y[setNumber];
-//        }
+    //первоначальный выход нейросети
+    private void netEvaluate(int setNumber) {
+        double temp = 0;
+        for (int j = 0; j < _numberOfVariables; j++) {
+            temp += _weight[j] * _variables[setNumber][j];
+        }
+        _net[setNumber] = temp;
     }
 
     //подсчет количества ошибок при поиске минимального числа наборов для обучения
@@ -168,60 +163,20 @@ class Lab1 implements LabCommonInterface {
         }
     }
 
-    //первоначальный выход нейросети
-    private void netEvaluate(int setNumber) {
-        double temp;
-//        for (int i = 0; i < _numberOfSets; i++) {
-            temp = 0;
-            for (int j = 0; j < _numberOfVariables; j++) {
-                temp += _weight[j] * _variables[setNumber][j];
-            }
-            _net[setNumber] = temp;
-//        }
-    }
-
-    //функция активации
-    private void outEvaluate(int setNumber) {
-        switch (_activationFunction) {
-            case _linearAF:
-//                System.arraycopy(_net, 0, _out, 0, _net.length);
-                _out[setNumber] = _net[setNumber];
-                break;
-            case _nonlinearAF:
-//                for (int i = 0; i < _numberOfSets; i++) { //здесь можно добавить любую ФА
-                    _out[setNumber] = 0.5 * (Math.tanh(_net[setNumber]) + 1);
-//                }
+    //коррекция весов
+    @Override
+    protected void weightCorrection(int setNumber) { // коррекция весов по вектору переменных с номером setNumber
+        double derivative = 1;
+        for (int i = 0; i < _numberOfVariables; i++) {
+            if (_activationFunction.equals(_nonlinearAF))
+                derivative = nonLinearDerivative(i); //если производная не единица, домножим на нее
+            _weight[i] += _norm * _delta[setNumber] * _variables[setNumber][i] * derivative;
         }
-    }
-
-    //реальный выход нейросети (двоичный вектор)
-    private void yEvaluate(int setNumber) {
-        double border = 0;
-        switch (_activationFunction) {
-            case _linearAF:
-                border = -0.00001; //для корректного сравнения с нулем чисел с плавающей точкой
-                break;
-            case _nonlinearAF:
-                border = 0.5;
-        }
-//        for (int i = 0; i < _numberOfSets; i++) {
-            _y[setNumber] = (_net[setNumber] >= border ? 1 : 0);
-//        }
     }
 
     //производная сигмоидальной функции
     private double nonLinearDerivative(int index) {
         return -0.5 * Math.pow(Math.tanh(_net[index]), 2) + 0.5;
-    }
-
-    //коррекция весов
-    private void weightCorrection(int setNumber) { // коррекция весов по вектору переменных с номером setNumber
-        double derivative = 1;
-        for (int i = 0; i < _numberOfVariables; i++) {
-                if (_activationFunction.equals(_nonlinearAF))
-                    derivative = nonLinearDerivative(i); //если производная не единица, домножим на нее
-                _weight[i] += _norm * _delta[setNumber] * _variables[setNumber][i] * derivative;
-        }
     }
 
     //проверка сети на работоспособность
