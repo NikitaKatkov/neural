@@ -45,21 +45,29 @@ public class LabLauncher {
                 }
                 lab = new Lab1(numberOfVariables, norm, activationFunc, enableSelection);
                 //конец адекватного запуска, начало глупого и некрасивого (и вообще на работе бы руки оторвали за такое)
-
 /*
                 System.out.format("%nЛинейная ФА без перебора%n");
-                lab = new Lab1(4,0.15, "linear", false);
+                lab = new Lab1(4,0.15, "step", false);
                 lab.start();
                 System.out.format("%nЛинейная ФА с перебором%n");
-                lab = new Lab1(4,0.15, "linear", true);
+                lab = new Lab1(4,0.15, "step", true);
                 lab.start();
                 System.out.format("%nНелинейная ФА без перебора%n");
-                lab = new Lab1(4,0.15, "nonlinear", false);
+                lab = new Lab1(4,0.15, "sigmoid", false);
                 lab.start();
                 System.out.format("%nНелинейная ФА с перебором%n");
-                lab = new Lab1(4,0.15, "nonlinear", true);
+                lab = new Lab1(4,0.15, "sigmoid", true);
                 lab.start();
 */
+                break;
+            case 2:
+                System.out.println("Введите длину \"окна\": ");
+                int intervalSize = scanner.nextInt();
+                System.out.println("Введите левую границу интервала: ");
+                int beginOfInterval = scanner.nextInt();
+                System.out.println("Введите правую границу интервала: ");
+                int endOfInterval = scanner.nextInt();
+                lab = new Lab2(norm, activationFunc, intervalSize,beginOfInterval, endOfInterval);
                 break;
             default:
                 System.out.println("Остальных лаб пока нет :)");

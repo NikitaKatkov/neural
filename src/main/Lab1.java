@@ -8,7 +8,7 @@ class Lab1 extends LabCommonClass {
     //ПАРАМЕТРЫ ЗАДАЧИ
     private int _numberOfVariables; //не включая фиктивную переменную x_0 = 1
     private int _numberOfSets;
-    private final String _defaultFunction = "0101011101110111";
+    private final String _defaultFunction = "0101011101110111"; //собственный вариант, чтобы не вводить каждый раз
     List<Integer> _combinationSet;
 
     //ПОЛЯ ДЛЯ ВЫЧИСЛЕНИЙ
@@ -21,23 +21,18 @@ class Lab1 extends LabCommonClass {
     //МЕТОДЫ
     //конструктор
     Lab1(int numberOfVariables, double norm, String activationFunction, boolean enableSelection) {
+        super(norm, activationFunction);
         numberOfVariables++;
         _numberOfVariables = numberOfVariables; //учиываем x_0
         _enableSelection = enableSelection;
         _numberOfSets = (int) Math.pow(2, _numberOfVariables - 1);
-        _norm = norm;
-        if (!activationFunction.equals(_linearAF) && !activationFunction.equals(_nonlinearAF)) {
-            System.out.println("Неверный параметр: функция активации (требуется linear или nonlinear)"); //вынести названия функций в константы
-            throw new RuntimeException("Инициализация функции активации не выполнена");
-        }
-        _activationFunction = activationFunction;
         _variables = new int[_numberOfSets][_numberOfVariables];
-        _function = new int[_numberOfSets];
+        _function = new double[_numberOfSets];
         _weight = new double[_numberOfVariables];
         _net = new double[_numberOfSets];
-        _y = new int[_numberOfSets];
+        _y = new double[_numberOfSets];
         _out = new double[_numberOfSets];
-        _delta = new int[_numberOfSets];
+        _delta = new double[_numberOfSets];
         _combinationSet = new ArrayList<>();
         if (!enableSelection) {
             for (int i = 0; i < _numberOfSets; i++) { //_combinationSet содержит полный список наборов, если не стоит флаг их перебора
@@ -62,7 +57,7 @@ class Lab1 extends LabCommonClass {
         int epoch = 1;
         do {
              _errorCounter = 0;
-            for (int setNumber : _combinationSet) {
+            for (int setNumber : _combinationSet) { //шаг -- предъявление одного набора
                 netEvaluate(setNumber);
                 outEvaluate(setNumber);
                 yEvaluate(setNumber);
@@ -72,7 +67,7 @@ class Lab1 extends LabCommonClass {
                     _errorCounter++;
                 }
             }
-            if (!_enableSelection) {
+            if (!_enableSelection) { //печать результата в консоль
                 System.out.println("    ЭПОХА: " + epoch);
                 printData();
                 System.out.println("Ошибки: " + _errorCounter + "\r\n ");
@@ -87,6 +82,8 @@ class Lab1 extends LabCommonClass {
         } while (!(_errorCounter == 0 && checkNet()));
         return true;
     }
+
+
 
     //обучение с перебором наборов
     private boolean trainNetWithSelection() {
@@ -147,7 +144,8 @@ class Lab1 extends LabCommonClass {
     }
 
     //первоначальный выход нейросети
-    private void netEvaluate(int setNumber) {
+    @Override
+    void netEvaluate(int setNumber) {
         double temp = 0;
         for (int j = 0; j < _numberOfVariables; j++) {
             temp += _weight[j] * _variables[setNumber][j];
@@ -168,7 +166,7 @@ class Lab1 extends LabCommonClass {
     protected void weightCorrection(int setNumber) { // коррекция весов по вектору переменных с номером setNumber
         double derivative = 1;
         for (int i = 0; i < _numberOfVariables; i++) {
-            if (_activationFunction.equals(_nonlinearAF))
+            if (_activationFunction.equals(_sigmoidAF))
                 derivative = nonLinearDerivative(i); //если производная не единица, домножим на нее
             _weight[i] += _norm * _delta[setNumber] * _variables[setNumber][i] * derivative;
         }
@@ -207,7 +205,7 @@ class Lab1 extends LabCommonClass {
 //        for (int i = 0; i < _numberOfSets; i++) System._out.format("%.2f ", _out[i]);
 //        System._out.println();
         System.out.println("Значения полученной функции: ");
-        for (int i = 0; i < _numberOfSets; i++) System.out.format("%d ", _y[i]);
+        for (int i = 0; i < _numberOfSets; i++) System.out.format("%.0f ", _y[i]);
         System.out.println();
     }
 
