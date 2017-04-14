@@ -7,8 +7,8 @@ abstract class LabCommonClass { //для удобства запуска все�
     String _activationFunction;
     final int _epochLimit = 100000;
     final String _linearAF = "linear", _sigmoidAF = "sigmoid", _stepAF = "step";
-    double[] _function, _y, _delta;
-    double[] _weight, _net, _out;
+    double[] _function;
+    double[][] _weight, _net, _out, _y, _delta;
     int _errorCounter;
     double _border;
 
@@ -26,30 +26,20 @@ abstract class LabCommonClass { //для удобства запуска все�
     abstract boolean start();
 
     //коррекция весов
-    abstract void weightCorrection(int index); // коррекция весов по обучающему набору с номером index
+    abstract void weightCorrection(int firstIndex, int secondIndex); // коррекция весов по обучающему набору с номером index
 
     abstract boolean trainNet();
 
-    abstract void netEvaluate(int index);
+    abstract void netEvaluate(int firstIndex, int secondIndex);
 
     //вычисление вектора ошибок
-    void deltaEvaluate(int setNumber) {
-        _delta[setNumber] = _function[setNumber] - _y[setNumber];
-    }
+    abstract void deltaEvaluate(int firstIndex, int secondIndex);
 
     //функция активации
-    void outEvaluate(int setNumber) {
-        switch (_activationFunction) {
-            case _linearAF:
-                _out[setNumber] = _net[setNumber];
-                break;
-            case _sigmoidAF:
-                _out[setNumber] = 0.5 * (Math.tanh(_net[setNumber]) + 1);
-        }
-    }
+    abstract void outEvaluate(int firstIndex, int secondIndex);
 
     //реальный выход нейросети (двоичный вектор)
-    void yEvaluate(int setNumber) {
+    void yEvaluate(int firstIndex, int secondIndex) {
         _border = 0;
         switch (_activationFunction) {
             case _linearAF:
@@ -58,6 +48,6 @@ abstract class LabCommonClass { //для удобства запуска все�
             case _sigmoidAF:
                 _border = 0.5;
         }
-        _y[setNumber] = (_net[setNumber] >= _border ? 1 : 0);
+        _y[firstIndex][secondIndex] = (_net[firstIndex][secondIndex] >= _border ? 1 : 0);
     }
 }

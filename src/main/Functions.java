@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 class Functions {
@@ -41,5 +42,14 @@ class Functions {
             }
         }
        return combination;
+    }
+
+    static List<Integer> parseLayerConfiguration(String layers) {
+        List<String> items = Arrays.asList(layers.split("\\s*-\\s*"));
+        List<Integer> layerConfiguration = new ArrayList<>();
+        for (String item : items) {
+            layerConfiguration.add(Integer.parseInt(item));
+        }
+        return layerConfiguration;
     }
 }

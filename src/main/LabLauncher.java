@@ -1,5 +1,6 @@
 package main;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class LabLauncher {
@@ -61,13 +62,25 @@ public class LabLauncher {
 */
                 break;
             case 2:
+                System.out.println("Введите число точек в интервале: ");
+                int numberOfPoints = scanner.nextInt();
                 System.out.println("Введите длину \"окна\": ");
                 int intervalSize = scanner.nextInt();
+                if (intervalSize <= 0 || intervalSize > numberOfPoints) {
+                    System.out.println("Неверно задана длина \"окна\"!");
+                    return;
+                }
                 System.out.println("Введите левую границу интервала: ");
                 int beginOfInterval = scanner.nextInt();
                 System.out.println("Введите правую границу интервала: ");
                 int endOfInterval = scanner.nextInt();
-                lab = new Lab2(norm, activationFunc, intervalSize,beginOfInterval, endOfInterval);
+                lab = new Lab2(norm, activationFunc, intervalSize,beginOfInterval, endOfInterval, numberOfPoints);
+                break;
+            case 3:
+                System.out.println("Введите конфигурацию слоев в виде количества\"входы нейроны...нейроны выходы\" через тире: ");
+                String layers = scanner.next();
+                List<Integer> layersConfiguration = Functions.parseLayerConfiguration(layers);
+                lab = new Lab3(norm, activationFunc, layersConfiguration);
                 break;
             default:
                 System.out.println("Остальных лаб пока нет :)");

@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/*
+во всей лабораторной первый индекс в методах и при обращении к двумерным
+массивам равен нулю, т.к. сеть состоит из одного нейрона
+ */
+
 class Lab1 extends LabCommonClass {
     //ПАРАМЕТРЫ ЗАДАЧИ
     private int _numberOfVariables; //не включая фиктивную переменную x_0 = 1
@@ -28,11 +33,11 @@ class Lab1 extends LabCommonClass {
         _numberOfSets = (int) Math.pow(2, _numberOfVariables - 1);
         _variables = new int[_numberOfSets][_numberOfVariables];
         _function = new double[_numberOfSets];
-        _weight = new double[_numberOfVariables];
-        _net = new double[_numberOfSets];
-        _y = new double[_numberOfSets];
-        _out = new double[_numberOfSets];
-        _delta = new double[_numberOfSets];
+        _weight = new double[1][_numberOfVariables];
+        _net = new double[1][_numberOfSets];
+        _y = new double[1][_numberOfSets];
+        _out = new double[1][_numberOfSets];
+        _delta = new double[1][_numberOfSets];
         _combinationSet = new ArrayList<>();
         if (!enableSelection) {
             for (int i = 0; i < _numberOfSets; i++) { //_combinationSet содержит полный список наборов, если не стоит флаг их перебора
@@ -58,12 +63,12 @@ class Lab1 extends LabCommonClass {
         do {
              _errorCounter = 0;
             for (int setNumber : _combinationSet) { //шаг -- предъявление одного набора
-                netEvaluate(setNumber);
-                outEvaluate(setNumber);
-                yEvaluate(setNumber);
-                deltaEvaluate(setNumber);
-                if (_delta[setNumber] != 0) {
-                    weightCorrection(setNumber);
+                netEvaluate(0,setNumber);
+                outEvaluate(0 ,setNumber);
+                yEvaluate(0, setNumber);
+                deltaEvaluate(0, setNumber);
+                if (_delta[0][setNumber] != 0) {
+                    weightCorrection(0, setNumber);
                     _errorCounter++;
                 }
             }
@@ -145,46 +150,62 @@ class Lab1 extends LabCommonClass {
 
     //первоначальный выход нейросети
     @Override
-    void netEvaluate(int setNumber) {
+    void netEvaluate(int firstIndex, int setNumber) {
         double temp = 0;
         for (int j = 0; j < _numberOfVariables; j++) {
-            temp += _weight[j] * _variables[setNumber][j];
+            temp += _weight[0][j] * _variables[setNumber][j];
         }
-        _net[setNumber] = temp;
+        _net[0][setNumber] = temp;
     }
 
     //подсчет количества ошибок при поиске минимального числа наборов для обучения
     private void errorEvaluate() {
 //        _errorCounter = 0;
         for (int i = 0; i < _numberOfSets; i++) {
-            if (!_combinationSet.contains(i) && _function[i] != _y[i]) _errorCounter++;
+            if (!_combinationSet.contains(i) && _function[i] != _y[0][i]) _errorCounter++;
+        }
+    }
+
+    //вычисление вектора ошибок
+    void deltaEvaluate(int firstIndex, int setNumber) {
+        _delta[0][setNumber] = _function[setNumber] - _y[firstIndex][setNumber];
+    }
+
+    //функция активации
+    void outEvaluate(int firstIndex, int secondIndex) {
+        switch (_activationFunction) {
+            case _linearAF:
+                _out[0][secondIndex] = _net[0][secondIndex];
+                break;
+            case _sigmoidAF:
+                _out[firstIndex][secondIndex] = 0.5 * (Math.tanh(_net[firstIndex][secondIndex]) + 1);
         }
     }
 
     //коррекция весов
     @Override
-    protected void weightCorrection(int setNumber) { // коррекция весов по вектору переменных с номером setNumber
+    protected void weightCorrection(int firstIndex, int setNumber) { // коррекция весов по вектору переменных с номером setNumber
         double derivative = 1;
         for (int i = 0; i < _numberOfVariables; i++) {
             if (_activationFunction.equals(_sigmoidAF))
                 derivative = nonLinearDerivative(i); //если производная не единица, домножим на нее
-            _weight[i] += _norm * _delta[setNumber] * _variables[setNumber][i] * derivative;
+            _weight[0][i] += _norm * _delta[firstIndex][setNumber] * _variables[setNumber][i] * derivative;
         }
     }
 
     //производная сигмоидальной функции
     private double nonLinearDerivative(int index) {
-        return -0.5 * Math.pow(Math.tanh(_net[index]), 2) + 0.5;
+        return -0.5 * Math.pow(Math.tanh(_net[0][index]), 2) + 0.5;
     }
 
     //проверка сети на работоспособность
     private boolean checkNet() {
         for (int i = 0; i < _numberOfSets; i++) {
-            netEvaluate(i);
-            outEvaluate(i);
-            yEvaluate(i);
-            deltaEvaluate(i);
-            if (_delta[i] != 0) {
+            netEvaluate(0, i);
+            outEvaluate(0, i);
+            yEvaluate(0, i);
+            deltaEvaluate(0, i);
+            if (_delta[0][i] != 0) {
                 return false;
             }
         }
@@ -196,7 +217,7 @@ class Lab1 extends LabCommonClass {
     //печать лога в консоль
     private void printData() {
         System.out.print("Веса: ");
-        for (int i = 0; i < _numberOfVariables; i++) System.out.format("%.2f ", _weight[i]);
+        for (int i = 0; i < _numberOfVariables; i++) System.out.format("%.2f ", _weight[0][i]);
         System.out.println();
 //        System._out.println("NET: ");
 //        for (int i = 0; i < _numberOfSets; i++) System._out.format("%.2f ", _net[i]);
@@ -205,21 +226,21 @@ class Lab1 extends LabCommonClass {
 //        for (int i = 0; i < _numberOfSets; i++) System._out.format("%.2f ", _out[i]);
 //        System._out.println();
         System.out.println("Значения полученной функции: ");
-        for (int i = 0; i < _numberOfSets; i++) System.out.format("%.0f ", _y[i]);
+        for (int i = 0; i < _numberOfSets; i++) System.out.format("%.0f ", _y[0][i]);
         System.out.println();
     }
 
     //очистка полей для повторного обучения
     private void clearFields() {
         for (int i = 0; i < _numberOfVariables; i++) {
-            _weight[i] = 0;
+            _weight[0][i] = 0;
         }
         for (int i = 0; i < _numberOfSets; i++) {
-            _out[i] = 0;
-            _net[i] = 0;
-            _y[i] = 0;
+            _out[0][i] = 0;
+            _net[0][i] = 0;
+            _y[0][i] = 0;
         }
         _errorCounter = 0;
-        System.arraycopy(_function, 0, _delta, 0, _function.length);
+        System.arraycopy(_function, 0, _delta[0], 0, _function.length);
     }
 }
