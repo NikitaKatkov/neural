@@ -1,40 +1,42 @@
 package main;
 
-public class Neuron {
+public class Neuron extends NeuronCommonClass{
     //конструктор
-    Neuron(int previousLayer, int nextLayer) {
-        this.previousLayer = previousLayer;
-        this.nextLayer = nextLayer;
+    Neuron(String activationFunction, int previousLayer, int nextLayer) {
+        super(nextLayer);
+        _previousLayer = previousLayer;
+        _activationFunction = activationFunction;
     }
 
-    static double _activationFunction(int index) {
-        return index; //записать функцию от индекса
+    // функция активации -- f(_net)
+    private double border = 0.001;
+    private String _activationFunction;
+    private double activationFunction(int value) {
+        switch (_activationFunction) {
+            case LabCommonClass._linearAF:
+                return value;
+            case LabCommonClass._sigmoidAF:
+                return (1 - Math.exp(-value))/(1 + Math.exp(-value));
+            case LabCommonClass._stepAF:
+                return Math.abs(value) > border ? 1 : 0;
+            default:
+                return value;
+        }
     }
 
-    private double net;
-    private double y;
 
+
+    private double _net;
+    private int _previousLayer;
+
+    // геттеры/сеттеры
     public double getNet() {
-        return net;
+        return _net;
     }
-    public void setNet(double net) {
-        this.net = net;
-    }
-    public double getY() {
-        return y;
-    }
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    //номера следующего и предыдущего слоя для удобного поиска в массиве
-    private int nextLayer;
-    private int previousLayer;
-
-    public int getNextLayer() {
-        return nextLayer;
+    public void setNet(double _net) {
+        this._net = _net;
     }
     public int getPreviousLayer() {
-        return previousLayer;
+        return _previousLayer;
     }
 }

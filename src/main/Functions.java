@@ -44,12 +44,12 @@ class Functions {
        return combination;
     }
 
-    static List<Integer> parseLayerConfiguration(String layers) {
+    static List<Integer> parseIntegers(String layers) {
         List<String> items = Arrays.asList(layers.split("\\s*-\\s*"));
-        List<Integer> layerConfiguration = new ArrayList<>();
+        List<Integer> configuration = new ArrayList<>();
         for (String item : items) {
-            layerConfiguration.add(Integer.parseInt(item));
+            configuration.add(Integer.parseInt(item));
         }
-        return layerConfiguration;
+        return configuration;
     }
 }

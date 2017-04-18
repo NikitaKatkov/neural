@@ -28,7 +28,7 @@ public class LabLauncher {
                 Но лучше запускать по-нормальному, мы ведь здоровые и адекватные люди, знающие, чо хардкод - это убого ;)
                 */
 
-                System.out.println("Введите количество переменных: ");
+                System.out.println("Количество переменных: ");
                 int numberOfVariables = scanner.nextInt();
                 System.out.println("Включить поиск наименьшего подмножества наборов для обучения? (y/n) ");
                 String selection = scanner.next();
@@ -62,25 +62,31 @@ public class LabLauncher {
 */
                 break;
             case 2:
-                System.out.println("Введите число точек в интервале: ");
+                System.out.println("Число точек в интервале: ");
                 int numberOfPoints = scanner.nextInt();
-                System.out.println("Введите длину \"окна\": ");
+                System.out.println("Длина \"окна\": ");
                 int intervalSize = scanner.nextInt();
                 if (intervalSize <= 0 || intervalSize > numberOfPoints) {
                     System.out.println("Неверно задана длина \"окна\"!");
                     return;
                 }
-                System.out.println("Введите левую границу интервала: ");
+                System.out.println("Левая граница интервала: ");
                 int beginOfInterval = scanner.nextInt();
-                System.out.println("Введите правую границу интервала: ");
+                System.out.println("Правая граница интервала: ");
                 int endOfInterval = scanner.nextInt();
                 lab = new Lab2(norm, activationFunc, intervalSize,beginOfInterval, endOfInterval, numberOfPoints);
                 break;
             case 3:
-                System.out.println("Введите конфигурацию слоев в виде количества\"входы нейроны...нейроны выходы\" через тире: ");
-                String layers = scanner.next();
-                List<Integer> layersConfiguration = Functions.parseLayerConfiguration(layers);
-                lab = new Lab3(norm, activationFunc, layersConfiguration);
+                System.out.println("Конфигурация слоев в виде количества\"входы нейроны...нейроны выходы\" через тире: ");
+                String layersStr = scanner.next();
+                List<Integer> layersConfiguration = Functions.parseIntegers(layersStr);
+                System.out.println("Входные значения через тире: ");
+                String xStr = scanner.next();
+                List<Integer> x = Functions.parseIntegers(xStr);
+                System.out.println("Требуемые выходные значения через тире: ");
+                String tStr = scanner.next();
+                List<Integer> t = Functions.parseIntegers(tStr);
+                lab = new Lab3(norm, activationFunc, layersConfiguration, x, t);
                 break;
             default:
                 System.out.println("Остальных лаб пока нет :)");

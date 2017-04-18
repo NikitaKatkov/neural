@@ -6,7 +6,7 @@ abstract class LabCommonClass { //для удобства запуска все�
     double _norm; //норма обучения
     String _activationFunction;
     final int _epochLimit = 100000;
-    final String _linearAF = "linear", _sigmoidAF = "sigmoid", _stepAF = "step";
+    static final String _linearAF = "linear", _sigmoidAF = "sigmoid", _stepAF = "step";
     double[] _function;
     double[][] _weight, _net, _out, _y, _delta;
     int _errorCounter;
