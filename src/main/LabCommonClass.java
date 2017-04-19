@@ -8,7 +8,7 @@ abstract class LabCommonClass { //для удобства запуска все�
     final int _epochLimit = 100000;
     static final String _linearAF = "linear", _sigmoidAF = "sigmoid", _stepAF = "step";
     double[] _function;
-    double[] _weight, _net, _out, _y, _delta;
+    double[]  _net, _out, _y, _delta;
     int _errorCounter;
     double _border;
 

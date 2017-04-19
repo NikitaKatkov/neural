@@ -2,9 +2,10 @@ package main;
 
 class Lab2 extends LabCommonClass {
     //ПАРАМЕТРЫ ЗАДАЧИ
-    private final int _numberOfPoints; //число точек в интервале
-    private int _intervalSize; //размер окна
-    private double[] _predictedValues; //для записи вычислений обученной сети
+    private final int _numberOfPoints; // число точек в интервале
+    private int _intervalSize; // размер окна
+    private double[] _predictedValues; // для записи вычислений обученной сети
+    private double[] _weight; // веса
 
     //конструктор
     Lab2(double norm, String activationFunction, int intervalSize, double beginOfInterval, double endOfInterval, int numberOfPoints) {
@@ -15,8 +16,8 @@ class Lab2 extends LabCommonClass {
         _function = new double[_numberOfPoints];
         _net = new double[_numberOfPoints];
         _delta = new double[_numberOfPoints];
-        initializeFunction(beginOfInterval, endOfInterval); //вычисление первых 20 значений
-        System.arraycopy(_function, 0, _net[0], 0, _intervalSize); //копирование первых значений функции для начала обучения
+        initializeFunction(beginOfInterval, endOfInterval); // вычисление первых 20 значений
+        System.arraycopy(_function, 0, _net[0], 0, _intervalSize); // копирование первых значений функции для начала обучения
         _border = 0.05;
     }
 
@@ -24,7 +25,7 @@ class Lab2 extends LabCommonClass {
     private void initializeFunction(double beginOfInterval, double endOfInterval) {
         double step = (endOfInterval - beginOfInterval)/_numberOfPoints;
         for (double t = beginOfInterval, index = 0; index < _numberOfPoints; t += step, index++) {
-            _function[(int)index] = Math.exp(-0.1*Math.pow(t,2)); //функция по варианту из методички
+            _function[(int)index] = Math.exp(-0.1*Math.pow(t,2)); // функция по варианту из методички
         }
     }
 

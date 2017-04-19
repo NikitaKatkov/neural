@@ -19,7 +19,7 @@ class Lab1 extends LabCommonClass {
     //ПОЛЯ ДЛЯ ВЫЧИСЛЕНИЙ
     private int[][] _variables;
     private boolean _enableSelection;
-
+    private double[] _weight;
 
     //ВСПОМОГАТЕЛЬНЫЕ КОНСТРУКЦИИ
     private Scanner _consoleReader = new Scanner(System.in);
