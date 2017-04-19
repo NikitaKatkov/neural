@@ -11,10 +11,10 @@ class Lab2 extends LabCommonClass {
         super(norm, activationFunction);
         _numberOfPoints = numberOfPoints;
         _intervalSize = intervalSize;
-        _weight = new double[1][_intervalSize];
+        _weight = new double[_intervalSize];
         _function = new double[_numberOfPoints];
-        _net = new double[1][_numberOfPoints];
-        _delta = new double[1][_numberOfPoints];
+        _net = new double[_numberOfPoints];
+        _delta = new double[_numberOfPoints];
         initializeFunction(beginOfInterval, endOfInterval); //вычисление первых 20 значений
         System.arraycopy(_function, 0, _net[0], 0, _intervalSize); //копирование первых значений функции для начала обучения
         _border = 0.05;
@@ -35,13 +35,13 @@ class Lab2 extends LabCommonClass {
             System.arraycopy(_function, 0, _predictedValues, 0, _intervalSize);
             for (int index = _intervalSize; index < _numberOfPoints + _intervalSize; index++) {
                 for (int weightIndex = 0, k = index; weightIndex < _intervalSize && k < index + _intervalSize;weightIndex++, k++) {
-                    _predictedValues[index] += _weight[0][weightIndex] * _predictedValues[k - _intervalSize];
+                    _predictedValues[index] += _weight[weightIndex] * _predictedValues[k - _intervalSize];
                 }
             }
         }
         System.out.println("Подобранные веса: ");
         for (int i = 0; i < _intervalSize; i++) {
-            System.out.format("%.3f ", _weight[0][i]);
+            System.out.format("%.3f ", _weight[i]);
         }
         System.out.println("\r\nВычисленные значения функции: ");
         for (int i = _intervalSize; i < _numberOfPoints + _intervalSize; i++) {
@@ -54,14 +54,14 @@ class Lab2 extends LabCommonClass {
     void netEvaluate(int zeroIndex, int secondIndex) {
         double temp = 0;
         for (int weightIndex = 0, k = secondIndex; weightIndex < _intervalSize && k < secondIndex + _intervalSize;weightIndex++, k++) {
-             temp += _weight[zeroIndex][weightIndex] * _function[k - _intervalSize];
+             temp += _weight[weightIndex] * _function[k - _intervalSize];
         }
-        _net[zeroIndex][secondIndex] = temp;
+        _net[secondIndex] = temp;
     }
 
     @Override
     void deltaEvaluate(int zeroIndex, int secondIndex) {
-        _delta[zeroIndex][secondIndex] = _function[secondIndex] - _net[zeroIndex][secondIndex];
+        _delta[secondIndex] = _function[secondIndex] - _net[secondIndex];
     }
 
     //out метод в родительском классе
@@ -70,7 +70,7 @@ class Lab2 extends LabCommonClass {
     @Override
     void weightCorrection(int zeroIndex, int indexToCorrect) {
         for (int weightIndex = 0; weightIndex < _intervalSize; weightIndex++) {
-            _weight[zeroIndex][weightIndex] += _norm * _delta[zeroIndex][indexToCorrect] * _function[indexToCorrect + weightIndex - _intervalSize];
+            _weight[weightIndex] += _norm * _delta[indexToCorrect] * _function[indexToCorrect + weightIndex - _intervalSize];
         }
     }
 
@@ -88,7 +88,7 @@ class Lab2 extends LabCommonClass {
             }
             epsilon = 0;
             for (int i = _intervalSize; i < _numberOfPoints; i++) {
-                epsilon += Math.pow(_delta[0][i], 2);
+                epsilon += Math.pow(_delta[i], 2);
             }
             epsilon = Math.sqrt(epsilon);
             epoch++;

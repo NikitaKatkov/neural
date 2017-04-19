@@ -12,13 +12,13 @@ public class Lab3 extends LabCommonClass{
         int nextLayer;
         for (int layerIndex = 0; layerIndex < layerConfiguration.size(); layerIndex++) {
             //номер следующего слоя нейронов
-            if (layerIndex + 1 == layerConfiguration.size()) nextLayer = layerIndex + 1;
+            if (layerIndex + 1 < layerConfiguration.size()) nextLayer = layerIndex + 1;
             else nextLayer = -1;
 
             // нейрон по индексу 0 всегда нейрон смещения. Если он не нужен, его поле _out нужно изменить на 0
             List<NeuronCommonClass> layer = new ArrayList<>();
             layer.add(0, new BiasNeuron(1, nextLayer));
-            for (int neuronIndex = 1; neuronIndex < layerConfiguration.get(layerIndex); neuronIndex++) {
+            for (int neuronIndex = 1; neuronIndex <= layerConfiguration.get(layerIndex); neuronIndex++) {
                 layer.add(new Neuron(activationFunction, layerIndex - 1, nextLayer));
             }
             _network.put(layerIndex, layer);
@@ -26,6 +26,7 @@ public class Lab3 extends LabCommonClass{
 
         //инициализация входов и ожидаемого результата
         _layerConfiguration = layerConfiguration;
+        _numberOfLayers = layerConfiguration.size();
         _x = x;
         _t = t;
         //нейроны на нулевом уровне не будут содержать значений в поле net (сетевой вход), а будут содержать только значения out (выход)
@@ -39,6 +40,7 @@ public class Lab3 extends LabCommonClass{
     // структура, хранящая слои нейронов - специально не совпадает со структурой слоя, чтобы разграничить обращение к этим сущностям
     private HashMap<Integer, List<NeuronCommonClass>> _network; // по сути обычный словарь, не пугайтесь
     private List<Integer> _x, _t, _layerConfiguration;
+    private int _numberOfLayers;
 
 
     @Override
@@ -53,8 +55,10 @@ public class Lab3 extends LabCommonClass{
 
     @Override
     boolean trainNet() {
+        List<NeuronCommonClass> currentLayer;
         //прямой ход - вычисление сетевых входов, выходов для каждого нейрона в каждом слое
-        for (int layer : _layerConfiguration) {
+        for (int layerNumber = 0; layerNumber < _numberOfLayers; layerNumber++) { //цикл идет по всем слоям нейросети
+            currentLayer = _network.get(layerNumber);
 
         }
         return false;
