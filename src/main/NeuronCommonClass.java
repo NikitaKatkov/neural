@@ -1,24 +1,29 @@
 package main;
 
 public class NeuronCommonClass {
-    NeuronCommonClass(int nextLayer) {
-        _nextLayer = nextLayer;
+    static final String BIAS_NEURON = "bias", SIMPLE_NEURON = "simple";
+    NeuronCommonClass(int currentLayer, String neuronType) {
+        _currentLayer = currentLayer;
+        if (!neuronType.equals(BIAS_NEURON) & !neuronType.equals(SIMPLE_NEURON)) {
+            throw new RuntimeException("попытка добавить нейрон неизвестного типа: " + neuronType);
+        } else {
+            _neuronType = neuronType;
+        }
     }
     //номера следующего слоя для удобного поиска в массиве
-    int _nextLayer;
+    private int _currentLayer;
     double _out;
-
-    //индексы соседних слоев с собственным слоем нейрона
-    public int getNextLayer() {
-        return _nextLayer;
-    }
+    private String _neuronType;
 
     //сеттер и геттер
-    public void setOut(double out) {
+    void setOut(double out) {
         _out = out;
     }
-
-    public double getOut() {
+    double getOut() {
         return _out;
+    }
+    public int getCurrentLayer() {return _currentLayer;}
+    public String getNeuronType() {
+        return _neuronType;
     }
 }

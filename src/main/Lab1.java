@@ -90,7 +90,6 @@ class Lab1 extends LabCommonClass {
     }
 
 
-
     //обучение с перебором наборов
     private boolean trainNetWithSelection() {
         boolean isTrainingComplete;
@@ -150,8 +149,8 @@ class Lab1 extends LabCommonClass {
     }
 
     //первоначальный выход нейросети
-    @Override
-    void netEvaluate(int firstIndex, int setNumber) {
+//    @Override
+    private void netEvaluate(int firstIndex, int setNumber) {
         double temp = 0;
         for (int j = 0; j < _numberOfVariables; j++) {
             temp += _weight[j] * _variables[setNumber][j];
@@ -168,12 +167,12 @@ class Lab1 extends LabCommonClass {
     }
 
     //вычисление вектора ошибок
-    void deltaEvaluate(int firstIndex, int setNumber) {
+    private void deltaEvaluate(int firstIndex, int setNumber) {
         _delta[setNumber] = _function[setNumber] - _y[setNumber];
     }
 
     //функция активации
-    void outEvaluate(int firstIndex, int secondIndex) {
+    private void outEvaluate(int firstIndex, int secondIndex) {
         switch (_activationFunction) {
             case _linearAF:
                 _out[secondIndex] = _net[secondIndex];
@@ -184,8 +183,7 @@ class Lab1 extends LabCommonClass {
     }
 
     //коррекция весов
-    @Override
-    protected void weightCorrection(int firstIndex, int setNumber) { // коррекция весов по вектору переменных с номером setNumber
+    private void weightCorrection(int firstIndex, int setNumber) { // коррекция весов по вектору переменных с номером setNumber
         double derivative = 1;
         for (int i = 0; i < _numberOfVariables; i++) {
             if (_activationFunction.equals(_sigmoidAF))

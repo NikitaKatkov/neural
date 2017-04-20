@@ -25,18 +25,7 @@ abstract class LabCommonClass { //для удобства запуска все�
     //запуск работы
     abstract boolean start();
 
-    //коррекция весов
-    abstract void weightCorrection(int firstIndex, int secondIndex); // коррекция весов по обучающему набору с номером index
-
     abstract boolean trainNet();
-
-    abstract void netEvaluate(int firstIndex, int secondIndex);
-
-    //вычисление вектора ошибок
-    abstract void deltaEvaluate(int firstIndex, int secondIndex);
-
-    //функция активации
-    abstract void outEvaluate(int firstIndex, int secondIndex);
 
     //реальный выход нейросети (двоичный вектор)
     void yEvaluate(int firstIndex, int secondIndex) {

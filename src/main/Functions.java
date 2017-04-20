@@ -45,10 +45,19 @@ class Functions {
     }
 
     static List<Integer> parseIntegers(String layers) {
-        List<String> items = Arrays.asList(layers.split("\\s*-\\s*"));
+        List<String> items = Arrays.asList(layers.split("\\s*~\\s*"));
         List<Integer> configuration = new ArrayList<>();
         for (String item : items) {
             configuration.add(Integer.parseInt(item));
+        }
+        return configuration;
+    }
+
+    static List<Double> parseDoubles(String layers) {
+        List<String> items = Arrays.asList(layers.split("\\s*~\\s*"));
+        List<Double> configuration = new ArrayList<>();
+        for (String item : items) {
+            configuration.add(Double.parseDouble(item));
         }
         return configuration;
     }

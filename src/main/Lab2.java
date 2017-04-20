@@ -51,8 +51,7 @@ class Lab2 extends LabCommonClass {
         return true;
     }
 
-    @Override
-    void netEvaluate(int zeroIndex, int secondIndex) {
+    void netEvaluate(int firstIndex, int secondIndex) {
         double temp = 0;
         for (int weightIndex = 0, k = secondIndex; weightIndex < _intervalSize && k < secondIndex + _intervalSize;weightIndex++, k++) {
              temp += _weight[weightIndex] * _function[k - _intervalSize];
@@ -60,16 +59,11 @@ class Lab2 extends LabCommonClass {
         _net[secondIndex] = temp;
     }
 
-    @Override
-    void deltaEvaluate(int zeroIndex, int secondIndex) {
+    void deltaEvaluate(int firstIndex, int secondIndex) {
         _delta[secondIndex] = _function[secondIndex] - _net[secondIndex];
     }
 
-    //out метод в родительском классе
-    //y метод в родительском классе
-
-    @Override
-    void weightCorrection(int zeroIndex, int indexToCorrect) {
+    void weightCorrection(int firstIndex, int indexToCorrect) {
         for (int weightIndex = 0; weightIndex < _intervalSize; weightIndex++) {
             _weight[weightIndex] += _norm * _delta[indexToCorrect] * _function[indexToCorrect + weightIndex - _intervalSize];
         }
@@ -96,8 +90,4 @@ class Lab2 extends LabCommonClass {
         } while (epsilon > _border && epoch < _epochLimit);
         return true;
     }
-
-    //заглушки, чтобы не производить лишних операций копирования массивов
-    @Override
-    protected void outEvaluate(int zeroIndex, int secondIndex) {}
 }

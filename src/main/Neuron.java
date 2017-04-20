@@ -2,32 +2,44 @@ package main;
 
 public class Neuron extends NeuronCommonClass{
     //конструктор
-    Neuron(String activationFunction, int previousLayer, int nextLayer) {
-        super(nextLayer);
-        _previousLayer = previousLayer;
+    Neuron(String activationFunction, int currentLayer, String neuronType) {
+        super(currentLayer, neuronType);
+        _previousLayer = currentLayer - 1;
         _activationFunction = activationFunction;
     }
 
     // функция активации -- f(_net)
     private double border = 0.001;
     private String _activationFunction;
-    private double activationFunction(int value) {
+
+    void activationFunction() { // вычисляет out(net), записывает в свое поле _out
         switch (_activationFunction) {
             case LabCommonClass._linearAF:
-                return value;
+                _out =  _net;
+                break;
             case LabCommonClass._sigmoidAF:
-                return (1 - Math.exp(-value))/(1 + Math.exp(-value));
+                _out = (1 - Math.exp(-_net))/(1 + Math.exp(-_net));
+                break;
             case LabCommonClass._stepAF:
-                return Math.abs(value) > border ? 1 : 0;
+                _out =  Math.abs(_net) > border ? 1 : 0;
+                break;
             default:
-                return value;
+                _out = _net;
         }
     }
 
-
+    double activationFunctionDerivative() {
+        switch (_activationFunction) {
+            case LabCommonClass._sigmoidAF:
+                return 0.5*(1 - Math.pow(_out,2)); // т.к. в _out уже лежит вычисленное значние функции активации
+            default:
+                return 1;
+        }
+    }
 
     private double _net;
     private int _previousLayer;
+    private double _delta;
 
     // геттеры/сеттеры
     public double getNet() {
@@ -38,5 +50,11 @@ public class Neuron extends NeuronCommonClass{
     }
     public int getPreviousLayer() {
         return _previousLayer;
+    }
+    public double getDelta() {
+        return _delta;
+    }
+    public void setDelta(double _delta) {
+        this._delta = _delta;
     }
 }

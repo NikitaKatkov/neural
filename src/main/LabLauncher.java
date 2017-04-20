@@ -77,15 +77,24 @@ public class LabLauncher {
                 lab = new Lab2(norm, activationFunc, intervalSize,beginOfInterval, endOfInterval, numberOfPoints);
                 break;
             case 3:
-                System.out.println("Конфигурация слоев в виде количества\"входы нейроны...нейроны выходы\" через тире: ");
+                System.out.println("Конфигурация слоев в виде количества элементов в слоях: \"входы нейроны...нейроны выходы\" через пробел: ");
                 String layersStr = scanner.next();
                 List<Integer> layersConfiguration = Functions.parseIntegers(layersStr);
-                System.out.println("Входные значения через тире: ");
+                System.out.println("Входные значения через пробел: ");
                 String xStr = scanner.next();
-                List<Integer> x = Functions.parseIntegers(xStr);
-                System.out.println("Требуемые выходные значения через тире: ");
+                List<Double> x = Functions.parseDoubles(xStr);
+                System.out.println("Требуемые выходные значения через пробел: ");
                 String tStr = scanner.next();
-                List<Integer> t = Functions.parseIntegers(tStr);
+                List<Double> t = Functions.parseDoubles(tStr);
+
+                // проверка корректности ввода
+                if (layersConfiguration.get(0) != x.size() - 1) {
+                    System.out.println("Число входов не совпадает с числом входных нейронов!");
+                    return;
+                } else if (layersConfiguration.get(layersConfiguration.size() - 1) != t.size()) {
+                    System.out.println("Число выходов не совпадает с числом выходных нейронов!");
+                    return;
+                }
                 lab = new Lab3(norm, activationFunc, layersConfiguration, x, t);
                 break;
             default:
