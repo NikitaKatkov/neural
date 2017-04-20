@@ -17,7 +17,7 @@ class Lab2 extends LabCommonClass {
         _net = new double[_numberOfPoints];
         _delta = new double[_numberOfPoints];
         initializeFunction(beginOfInterval, endOfInterval); // вычисление первых 20 значений
-        System.arraycopy(_function, 0, _net[0], 0, _intervalSize); // копирование первых значений функции для начала обучения
+        System.arraycopy(_function, 0, _net, 0, _intervalSize); // копирование первых значений функции для начала обучения
         _border = 0.05;
     }
 
