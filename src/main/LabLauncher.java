@@ -74,6 +74,8 @@ public class LabLauncher {
                 int beginOfInterval = scanner.nextInt();
                 System.out.println("Правая граница интервала: ");
                 int endOfInterval = scanner.nextInt();
+//                System.out.println("Точность: ");
+//                double border = scanner.nextDouble();
                 lab = new Lab2(norm, activationFunc, intervalSize,beginOfInterval, endOfInterval, numberOfPoints);
                 break;
             case 3:
@@ -96,6 +98,12 @@ public class LabLauncher {
                     return;
                 }
                 lab = new Lab3(norm, activationFunc, layersConfiguration, x, t);
+                break;
+            case 4:
+                System.out.println("Количество паттернов: ");
+                int numberOfPatterns = scanner.nextInt();
+
+                lab = new Lab4(norm, activationFunc, numberOfPatterns);
                 break;
             default:
                 System.out.println("Остальных лаб пока нет :)");

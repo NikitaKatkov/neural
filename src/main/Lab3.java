@@ -67,7 +67,8 @@ class Lab3 extends LabCommonClass {
 
     @Override
     boolean trainNet() {
-        double error, epoch = 0;
+        double error;
+        int epoch = 0;
         _border = 0.001;
         do {
             forwardEvaluation();
@@ -105,10 +106,9 @@ class Lab3 extends LabCommonClass {
         // сначала вычислим ошибку на последнем слое, формула для нее отличается от ошибок в скрытых слоях
         int expectedValueIndex = 0;
         double delta;
-//        for (NeuronCommonClass neuron : _network.get(_layerConfiguration.get(_numberOfLayers - 1))) {
-        for (NeuronCommonClass neuron : _network.get(_numberOfLayers - 1)) {
+        for (NeuronCommonClass neuron : _network.get(_layerConfiguration.get(_numberOfLayers - 1))) {
             // цикл по всем нейронам последнего слоя
-            if (neuron.getNeuronType().equals(BIAS_NEURON)) continue; // для нейрона смещения ошибку не считаем
+            if (neuron.getNeuronType().equals(BIAS_NEURON)) continue; // для нейрона смещения шибку не считаем
             if (neuron.getNeuronType().equals(SIMPLE_NEURON)) { // это условие на случай добавления других типов нейронов
                 Neuron currentNeuron = (Neuron) neuron;
                 delta = currentNeuron.activationFunctionDerivative() *( _expectedOutput.get(expectedValueIndex) - neuron.getOut());

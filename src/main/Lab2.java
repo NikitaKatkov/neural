@@ -18,7 +18,7 @@ class Lab2 extends LabCommonClass {
         _delta = new double[_numberOfPoints];
         initializeFunction(beginOfInterval, endOfInterval); // вычисление первых 20 значений
         System.arraycopy(_function, 0, _net, 0, _intervalSize); // копирование первых значений функции для начала обучения
-        _border = 0.05;
+        _border = 0.01;
     }
 
     //инициализация значений функции
@@ -51,7 +51,7 @@ class Lab2 extends LabCommonClass {
         return true;
     }
 
-    void netEvaluate(int firstIndex, int secondIndex) {
+    private void netEvaluate(int firstIndex, int secondIndex) {
         double temp = 0;
         for (int weightIndex = 0, k = secondIndex; weightIndex < _intervalSize && k < secondIndex + _intervalSize;weightIndex++, k++) {
              temp += _weight[weightIndex] * _function[k - _intervalSize];
@@ -59,11 +59,11 @@ class Lab2 extends LabCommonClass {
         _net[secondIndex] = temp;
     }
 
-    void deltaEvaluate(int firstIndex, int secondIndex) {
+    private void deltaEvaluate(int firstIndex, int secondIndex) {
         _delta[secondIndex] = _function[secondIndex] - _net[secondIndex];
     }
 
-    void weightCorrection(int firstIndex, int indexToCorrect) {
+    private void weightCorrection(int firstIndex, int indexToCorrect) {
         for (int weightIndex = 0; weightIndex < _intervalSize; weightIndex++) {
             _weight[weightIndex] += _norm * _delta[indexToCorrect] * _function[indexToCorrect + weightIndex - _intervalSize];
         }
