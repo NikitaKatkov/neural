@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Lab4 extends LabCommonClass {
+class Lab4 extends LabCommonClass {
     // значащий символ в паттернах
     private final char _specialSymbol = '1';
     // путь к паттернам - можно добавить ввод через консоль, но т.к. проект не выйдет за пределы моего гитхаба, делать не буду
@@ -16,7 +16,8 @@ public class Lab4 extends LabCommonClass {
     private final String _fileName = "pattern%d.txt";
 
     //список паттернов
-    private List<int[][]> _patterns;
+    private List<int[][]> _originalPatterns;
+    private List<int[]> _vectorizedPatterns;
 
     // конструктор
     Lab4(double norm, String activationFunction, int numberOfPatterns) {
@@ -25,9 +26,11 @@ public class Lab4 extends LabCommonClass {
             throw new RuntimeException("Число образцов должно быть не меньше одного!");
         }
 
-        _patterns = new ArrayList<>();
-        for (int fileIndex = 1; fileIndex <= numberOfPatterns; fileIndex++) {
-            _patterns.add(getPattern(prepareFilePath(_correctPattensFolderPath, _fileName, fileIndex)));
+        _originalPatterns = new ArrayList<>();
+        _vectorizedPatterns = new ArrayList<>();
+        for (int fileIndex = 0; fileIndex < numberOfPatterns; fileIndex++) {
+            _originalPatterns.add(getPattern(prepareFilePath(_correctPattensFolderPath, _fileName, fileIndex)));
+            _vectorizedPatterns.add(vectorize(_originalPatterns.get(fileIndex)));
         }
     }
 
@@ -64,10 +67,32 @@ public class Lab4 extends LabCommonClass {
         return pattern;
     }
 
+    // векторизация паттернов
+    private int[] vectorize(int[][] pattern) {
+        int numberOfLines = pattern.length, numberOfRows = pattern[0].length, vectorIndex = 0;
+        int[] vector = new int[numberOfLines * numberOfRows];
+        for (int lineIndex = 0; lineIndex < numberOfLines; lineIndex++) {
+            for (int rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
+                vector[vectorIndex] = pattern[lineIndex][rowIndex];
+            }
+        }
+        return vector;
+    }
+
+    // печать символа в консоль
+    private void printPattern(int[][] pattern) {
+        char ch;
+        for (int[] line : pattern) {
+            for (int pixel : line) {
+                ch = pixel == 1 ? 'o' : '.';
+                System.out.print(ch);
+            }
+        }
+    }
 
     @Override
     boolean start() {
-        return false;
+        return trainNet();
     }
 
     @Override
