@@ -103,7 +103,7 @@ public class LabLauncher {
                 System.out.println("Количество паттернов: ");
                 int numberOfPatterns = scanner.nextInt();
 
-                lab = new Lab4(norm, activationFunc, numberOfPatterns);
+                lab = new Lab4(norm, activationFunc, numberOfPatterns, scanner);
                 break;
             default:
                 System.out.println("Остальных лаб пока нет :)");

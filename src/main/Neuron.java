@@ -23,6 +23,10 @@ public class Neuron extends NeuronCommonClass{
             case LabCommonClass._stepAF:
                 _out =  Math.abs(_net) > border ? 1 : 0;
                 break;
+            case LabCommonClass._bipolarAF:
+                if (_net > 0) _out = 1;
+                else if (_net < 0) _out = -1;
+                break;
             default:
                 _out = _net;
         }
