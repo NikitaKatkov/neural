@@ -16,7 +16,8 @@ abstract class LabCommonClass { //для удобства запуска все�
     //ОБЩИЕ МЕТОДЫ
     LabCommonClass(double norm, String activationFunction) {
         _norm = norm;
-        if (!activationFunction.equals(_linearAF) && !activationFunction.equals(_sigmoidAF) && !activationFunction.equals(_stepAF)) {
+        if (!activationFunction.equals(_linearAF) && !activationFunction.equals(_sigmoidAF) &&
+            !activationFunction.equals(_stepAF) && !activationFunction.equals(_bipolarAF)) {
             System.out.println("Неверный параметр: функция активации (требуется linear, step или sigmoid)"); //вынести названия функций в константы
             throw new RuntimeException("Инициализация функции активации не выполнена");
         }

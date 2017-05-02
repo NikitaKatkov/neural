@@ -1,8 +1,11 @@
 package main;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 class Functions {
     //методы данного класса потенциально могут использоваться во многих работах
@@ -60,5 +63,41 @@ class Functions {
             configuration.add(Double.parseDouble(item));
         }
         return configuration;
+    }
+
+    // формирование пути к файлу с очередным файлом
+    static String prepareFilePath(String folderPath, String fileName, int fileIndex) {
+        return folderPath + String.format(fileName, fileIndex);
+    }
+
+    static void corruptPattern(int corruptionLevel, String fileName, String incorrectPatternsFolder, char _specialSymbol, char _emptySymbol, int fileIndex, int patternHeight, int patternWidth, int[][] pattern) {
+        // вычисление допустимого числа измененных битов
+        int errorLimit =  (int)(patternHeight * patternWidth * corruptionLevel / 100);
+        int errorCounter = 0;
+        // генератор случайных позиций для внесения ошибок
+        Random random = new Random(System.currentTimeMillis());
+        char specialSymbol, emptySymbol;
+            try (FileWriter writer = new FileWriter(prepareFilePath(incorrectPatternsFolder, fileName, fileIndex))) {
+                for (int lineIndex = 0; lineIndex < patternHeight; lineIndex++) {
+                    for (int charIndex = 0; charIndex < patternWidth; charIndex++) {
+                        if (errorCounter < errorLimit && random.nextGaussian() > 0.3) {
+                            /* эмпирически подобранное число, чтобы портилась не только верхняя часть паттерна, но и
+                             добавлялось не меньше ошибок, чем нужно.
+                             Если ошибку еще можно добавить, меняем символы */
+                            specialSymbol = _emptySymbol;
+                            emptySymbol = _specialSymbol;
+                            errorCounter++;
+                        } else {
+                            specialSymbol = _specialSymbol;
+                            emptySymbol = _emptySymbol;
+                        }
+                        writer.append(pattern[lineIndex][charIndex] == 1 ? specialSymbol : emptySymbol);
+                    }
+                    writer.append("\r\n");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Ошибка при открытии файла: corruptPattern");
+            }
+
     }
 }
