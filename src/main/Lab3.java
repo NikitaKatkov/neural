@@ -143,10 +143,10 @@ class Lab3 extends LabCommonClass {
             currentWeights = _weights.get(layerIndex - 1);
             for (int weightFirstIndex = 0; weightFirstIndex < previousLayer.size(); weightFirstIndex++) {
                 // цикл по всем весам, исходящим из одного нейрона предыдущего слоя
-                for (int weightSecondindex = 1; weightSecondindex < currentLayer.size(); weightSecondindex++) {
-                    currentWeight = _weights.get(layerIndex - 1)[weightFirstIndex][weightSecondindex]; // текущий изменяемый вес
-                    currentWeight += _norm * previousLayer.get(weightFirstIndex).getOut() * ((Neuron)currentLayer.get(weightSecondindex)).getDelta();
-                    currentWeights[weightFirstIndex][weightSecondindex] = currentWeight;
+                for (int weightSecondIndex = 1; weightSecondIndex < currentLayer.size(); weightSecondIndex++) {
+                    currentWeight = _weights.get(layerIndex - 1)[weightFirstIndex][weightSecondIndex]; // текущий изменяемый вес
+                    currentWeight += _norm * previousLayer.get(weightFirstIndex).getOut() * ((Neuron)currentLayer.get(weightSecondIndex)).getDelta();
+                    currentWeights[weightFirstIndex][weightSecondIndex] = currentWeight;
 
                 }
             }

@@ -66,17 +66,7 @@ class Lab4 extends LabCommonClass {
             }
         }
 
-        // инициализация контейнера весов
-        _weights = new double[_vectorLength][_vectorLength];
-        for (int i = 0; i < _vectorLength; i++) {
-            for (int j = 0; j < _vectorLength; j++) {
-                if (i == j) continue; // нулевые веса на диагонали матрицы
-                for (int patternIndex = 0; patternIndex < _numberOfPatterns; patternIndex++) {
-                    _weights[i][j] += _vectorizedPatterns.get(patternIndex)[i] * _vectorizedPatterns.get(patternIndex)[j];
-                }
-                // _weights[i][j] /= _vectorLength;
-            }
-        }
+        trainNet(); // инициализация весов
 
         // инициализация контейнера нейронов
         _network = new ArrayList<>();
@@ -238,9 +228,21 @@ class Lab4 extends LabCommonClass {
 
     @Override
     boolean trainNet() {
-        return false;
+        // инициализация контейнера весов
+        _weights = new double[_vectorLength][_vectorLength];
+        for (int i = 0; i < _vectorLength; i++) {
+            for (int j = 0; j < _vectorLength; j++) {
+                if (i == j) continue; // нулевые веса на диагонали матрицы
+                for (int patternIndex = 0; patternIndex < _numberOfPatterns; patternIndex++) {
+                    _weights[i][j] += _vectorizedPatterns.get(patternIndex)[i] * _vectorizedPatterns.get(patternIndex)[j];
+                }
+                // _weights[i][j] /= _vectorLength;
+            }
+        }
+        return true;
     }
 
+    // вычисление сетевого входа
     private void netEvaluate(Neuron currentNeuron, int neuronIndex) {
         double net = 0;
         for (int index = 0; index < _vectorLength; index++) {

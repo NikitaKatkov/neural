@@ -105,6 +105,14 @@ public class LabLauncher {
 
                 lab = new Lab4(norm, activationFunc, numberOfPatterns, scanner);
                 break;
+            case 5:
+                System.out.println("Количество признаков для кластеризации: ");
+                int numberOfAttributes = scanner.nextInt();
+                System.out.println("Количество кластеров: ");
+                int numberOfClusters = scanner.nextInt();
+
+                lab = new Lab5(norm, activationFunc, numberOfAttributes, numberOfClusters);
+                break;
             default:
                 System.out.println("Остальных лаб пока нет :)");
                 return;
