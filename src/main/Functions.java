@@ -103,10 +103,10 @@ class Functions {
 
     }
 
-    static HashMap<Integer, Entry> getDataFromCSV (String filePath) {
-        // признаки в csv файле между первым и последним разделителями !
+    static HashMap<Integer, Entry> getDataFromFile(String filePath, int numberOfAttributes) {
+        // признаки в файле от первого разделителя до конца строки
 
-        // разделитель csv
+        // разделитель
         String delimiter = ";";
 
         List<String> lines;
@@ -115,7 +115,7 @@ class Functions {
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println();
-            throw new RuntimeException("Ошибка при открытии файла " +  filePath);
+            throw new RuntimeException("Ошибка при открытии файла: " +  filePath);
         }
         HashMap<Integer, Entry> dataSet = new HashMap<>();
         for (int index = 0; index < lines.size(); index++) {
@@ -124,6 +124,9 @@ class Functions {
             int[] borders = {0, line.indexOf(delimiter), line.length()};
             int id = Integer.parseInt(line.substring(borders[0], borders[1]));
             List<String> items = Arrays.asList(line.substring(borders[1] + 1, borders[2]).split(delimiter));
+            if (items.size() != numberOfAttributes) {
+                throw new RuntimeException("Файл не содержит достаточное количество полей с признаками кластеризации");
+            }
             List<Double> value = new ArrayList<>();
             for (String item: items) {
                 value.add(Double.parseDouble(item));
@@ -132,5 +135,37 @@ class Functions {
             dataSet.put(index, new Entry(id, value));
         }
         return dataSet;
+    }
+
+    static int getFileSize(String filePath) {
+        // возвращает количество строк в файле
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println();
+            throw new RuntimeException("Ошибка при открытии файла: " +  filePath);
+        }
+        return lines.size();
+    }
+
+    static double getSpecialValue(List<Entry> data, String minOrMax) {
+        // возвращает значение(!) мин/макс элемента
+        // сравнение происходит только по первому параметру в поле _value - лень делать больше :)
+        int indexToReturn = 0, comparison;
+        if (data.get(indexToReturn).get_value().size() == 0) return -1;
+        for (int currentIndex = 1; currentIndex < data.size(); currentIndex++) {
+            comparison = data.get(indexToReturn).get_value().get(0).compareTo(data.get(currentIndex).get_value().get(0));
+            switch (minOrMax){
+                case "min" :
+                    if (comparison > 0 ) indexToReturn = currentIndex;
+                    break;
+                case "max":
+                    if (comparison < 0) indexToReturn = currentIndex;
+                    break;
+            }
+        }
+        return data.get(indexToReturn).get_value().get(0);
     }
 }

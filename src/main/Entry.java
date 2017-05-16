@@ -3,8 +3,8 @@ package main;
 import java.util.List;
 
 public class Entry {
-    private List<Double> _value;
-    private int _ID;
+    private List<Double> _value; // список признаков кластеризации - для общности, хотя в лабе нужен только 1 элемент
+    private int _ID; // идентификатор чтобы различать записи - собственно, идентификатор из документа с сайта
 
     Entry(int ID, List<Double> value) {
         _ID = ID;

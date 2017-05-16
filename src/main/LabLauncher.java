@@ -114,7 +114,7 @@ public class LabLauncher {
                 lab = new Lab5(norm, activationFunc, numberOfAttributes, numberOfClusters);
                 break;
             default:
-                System.out.println("Остальных лаб пока нет :)");
+                System.out.println("Других лаб нет :)");
                 return;
         }
         lab.start();
