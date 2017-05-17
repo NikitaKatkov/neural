@@ -60,8 +60,6 @@ class Lab5 extends LabCommonClass {
     private double[][] _weights;
     private int _numberOfDataSets; // число входных векторов для кластеризации
 
-
-
     @Override
     boolean start() {
          if (trainNet()) {
@@ -162,25 +160,30 @@ class Lab5 extends LabCommonClass {
     }
 
     private void printResult(boolean withData) {
-        String toPrint = withData ? "Values: " : "IDs: ";
+        String toPrint = withData ? "Значения: " : "IDs: ";
+        String bracket;
         for (int clusterIndex = 0; clusterIndex < _numberOfClusters; clusterIndex++) {
             System.out.format("Кластер %d", clusterIndex);
-            double min = Functions.getSpecialValue(_clusters.get(clusterIndex), _min);
-            double max = Functions.getSpecialValue(_clusters.get(clusterIndex), _max);
-            if (_numberOfAttributes == 1 && min > 0 && max > 0) System.out.format(" [от %.0f до %.0f]", min, max);
+            if (_numberOfAttributes == 1 && _clusters.get(clusterIndex).size() > 0) {
+                double min = Functions.getSpecialValue(_clusters.get(clusterIndex), _min);
+                double max = Functions.getSpecialValue(_clusters.get(clusterIndex), _max);
+                System.out.format(" [от %.0f до %.0f]", min, max);
+            }
             System.out.print(" : \r\n" + toPrint);
             for (Entry entry: _clusters.get(clusterIndex)) {
-                // печать id
                 if (withData) {
                     // печать самих признаков
-                    System.out.print("{");
+                    if (entry.get_value().size() != 1) bracket = "|";
+                    else bracket = "";
+
+                    System.out.print(bracket);
                     for (double nextVal : entry.get_value()) {
                         System.out.format("%.0f; ", nextVal);
                     }
-                    System.out.print("}");
+                    System.out.print(bracket + " ");
                 } else {
+                    // печать id
                     System.out.print(entry.get_ID() + "; ");
-
                 }
             }
             System.out.println();
